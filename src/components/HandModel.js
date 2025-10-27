@@ -112,7 +112,7 @@ function HandModelInner({
 }
 
 export default function HandModel(props) {
-  const { cameraLandmarks, side, position = [0, 0, 0], zRotationOffset = 0 } = props
+  const { cameraLandmarks, side, position = [0, 0, 0], zRotationOffset = 0, show3DCursor = false } = props
   const [modelPalmLength, setModelPalmLength] = useState(null)
   const [palmScaleMultiplier, setPalmScaleMultiplier] = useState(1)
 
@@ -145,7 +145,7 @@ export default function HandModel(props) {
       <Suspense fallback={null}>
         <HandModelInner {...props} onPalmLengthCalculated={setModelPalmLength} />
       </Suspense>
-      {cameraLandmarks && (
+      {cameraLandmarks && show3DCursor && (
         <group position={position} rotation={[Math.PI /2, -Math.PI /2, 0]} scale={palmScaleMultiplier}>
           <ThumbTargetCursor landmarks={cameraLandmarks} side={side} />
         </group>

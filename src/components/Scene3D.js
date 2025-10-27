@@ -126,6 +126,7 @@ export default function Scene3D({
   controlMode = 'camera',
   ikDebugData = { left: null, right: null },
   showIKVisualization = true,
+  show3DCursor = false,
   onManualLandmarkDrag = null,
   cameraLandmarks = { left: null, right: null }
 }) {
@@ -233,6 +234,7 @@ export default function Scene3D({
               useMultiDoF={useMultiDoF}
               showJointGimbals={showJointGimbals}
               cameraLandmarks={cameraLandmarks.right}
+              show3DCursor={show3DCursor}
             />
           </GimbalControl>
         </group>
@@ -264,6 +266,7 @@ export default function Scene3D({
               useMultiDoF={useMultiDoF}
               showJointGimbals={showJointGimbals}
               cameraLandmarks={cameraLandmarks.left}
+              show3DCursor={show3DCursor}
             />
           </GimbalControl>
         </group>

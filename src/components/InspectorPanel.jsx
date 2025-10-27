@@ -123,6 +123,8 @@ const InspectorPanel = ({
   onUseThumb3DoFChange,
   showIKVisualization,
   onShowIKVisualizationChange,
+  show3DCursor,
+  onShow3DCursorChange,
   isTrackingLocked,
   onTrackingLockChange,
   onResetHandPose,
@@ -707,6 +709,19 @@ const InspectorPanel = ({
               )}
             >
               Labels
+            </button>
+
+            {/* 3D Cursor */}
+            <button
+              onClick={() => onShow3DCursorChange(!show3DCursor)}
+              className={cn(
+                "px-2 py-1.5 rounded text-[10px] font-medium transition-all",
+                show3DCursor
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-secondary/20 text-muted-foreground hover:bg-secondary/40"
+              )}
+            >
+              3D Cursor
             </button>
 
             {/* Multi-DoF - HIDDEN FOR DEMO */}

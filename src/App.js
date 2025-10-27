@@ -212,6 +212,9 @@ export default function App() {
   // IK visualization toggle (default: disabled)
   const [showIKVisualization, setShowIKVisualization] = useState(false)
 
+  // 3D cursor visibility toggle (default: disabled)
+  const [show3DCursor, setShow3DCursor] = useState(false)
+
   const [selectedJoint, setSelectedJoint] = useState('wrist')
   const [selectedHand, setSelectedHand] = useState('left') // Which hand to control in manual mode
   const [controlMode, setControlMode] = useState('camera') // 'manual' or 'camera' - default to camera
@@ -538,6 +541,7 @@ export default function App() {
         controlMode={controlMode}
         ikDebugData={ikDebugData}
         showIKVisualization={showIKVisualization}
+        show3DCursor={show3DCursor}
         onManualLandmarkDrag={handleManualLandmarkDrag}
         cameraLandmarks={cameraLandmarks}
       />
@@ -614,6 +618,8 @@ export default function App() {
           onUseThumb3DoFChange={setUseThumb3DoF}
           showIKVisualization={showIKVisualization}
           onShowIKVisualizationChange={setShowIKVisualization}
+          show3DCursor={show3DCursor}
+          onShow3DCursorChange={setShow3DCursor}
           isTrackingLocked={isTrackingLocked}
           onTrackingLockChange={setIsTrackingLocked}
           onResetHandPose={handleResetHandPose}
