@@ -691,6 +691,47 @@ export default function App() {
           Show Debug
         </button>
       )}
+
+      {/* Inspector Panel Toggle Button */}
+      <button
+        onClick={() => setShowControlPanel(!showControlPanel)}
+        style={{
+          position: 'absolute',
+          bottom: '10px',
+          left: showDebugPanel ? '10px' : '110px',
+          padding: '8px 12px',
+          fontSize: '11px',
+          backgroundColor: showControlPanel ? 'rgba(255, 100, 100, 0.9)' : 'rgba(100, 200, 100, 0.9)',
+          color: 'white',
+          border: showControlPanel ? '1px solid rgba(255, 150, 150, 0.5)' : '1px solid rgba(150, 255, 150, 0.5)',
+          borderRadius: '4px',
+          cursor: 'pointer',
+          fontWeight: '600',
+          fontFamily: 'monospace',
+          zIndex: 20,
+          transition: 'all 0.2s'
+        }}
+        onMouseOver={(e) => {
+          if (showControlPanel) {
+            e.currentTarget.style.backgroundColor = 'rgba(255, 100, 100, 1)'
+            e.currentTarget.style.borderColor = 'rgba(255, 150, 150, 0.8)'
+          } else {
+            e.currentTarget.style.backgroundColor = 'rgba(100, 200, 100, 1)'
+            e.currentTarget.style.borderColor = 'rgba(150, 255, 150, 0.8)'
+          }
+        }}
+        onMouseOut={(e) => {
+          if (showControlPanel) {
+            e.currentTarget.style.backgroundColor = 'rgba(255, 100, 100, 0.9)'
+            e.currentTarget.style.borderColor = 'rgba(255, 150, 150, 0.5)'
+          } else {
+            e.currentTarget.style.backgroundColor = 'rgba(100, 200, 100, 0.9)'
+            e.currentTarget.style.borderColor = 'rgba(150, 255, 150, 0.5)'
+          }
+        }}
+      >
+        {showControlPanel ? 'Hide Inspector' : 'Show Inspector'}
+      </button>
     </div>
   )
 }
