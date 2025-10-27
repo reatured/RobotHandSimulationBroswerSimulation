@@ -111,10 +111,10 @@ export default function DraggableFingertip({
     <mesh
       ref={meshRef}
       position={[position.x, position.y, position.z]}
-      onPointerDown={handlePointerDown}
-      onPointerUp={handlePointerUp}
-      onPointerEnter={handlePointerEnter}
-      onPointerLeave={handlePointerLeave}
+      // onPointerDown={handlePointerDown}
+      // onPointerUp={handlePointerUp}
+      // onPointerEnter={handlePointerEnter}
+      // onPointerLeave={handlePointerLeave}
     >
       <sphereGeometry args={[size, 16, 16]} />
       <meshBasicMaterial

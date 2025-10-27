@@ -70,9 +70,9 @@ function DraggableTarget({ bone }: { bone: THREE.Bone }) {
     <mesh
       ref={meshRef}
       position={bone.position}
-      onPointerDown={() => setIsDragging(true)}
-      onPointerUp={() => setIsDragging(false)}
-      onPointerLeave={() => setIsDragging(false)}
+      // onPointerDown={() => setIsDragging(true)}
+      // onPointerUp={() => setIsDragging(false)}
+      // onPointerLeave={() => setIsDragging(false)}
     >
       <sphereGeometry args={[0.01, 16, 16]} />
       <meshStandardMaterial color={isDragging ? "yellow" : "cyan"} emissive="cyan" />

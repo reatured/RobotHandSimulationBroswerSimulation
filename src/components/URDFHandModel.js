@@ -28,6 +28,7 @@ export default function URDFHandModel({
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(true)
   const [semanticMapping, setSemanticMapping] = useState(null)
+  const [meshesLoaded, setMeshesLoaded] = useState(false)
   const groupRef = useRef()
 
   // Load URDF model
@@ -42,11 +43,18 @@ export default function URDFHandModel({
 
     setLoading(true)
     setError(null)
+    setMeshesLoaded(false) // Reset mesh loaded state
 
     const loader = new URDFLoader()
 
-    // Set up loading manager for better error handling
+    // Set up loading manager for better error handling and mesh loading tracking
     const manager = new THREE.LoadingManager()
+
+    manager.onLoad = () => {
+      console.log('✅ All meshes loaded for model!')
+      setMeshesLoaded(true)
+    }
+
     manager.onError = (url) => {
       console.error('Error loading:', url)
       setError(`Failed to load: ${url}`)
@@ -189,16 +197,13 @@ export default function URDFHandModel({
     }
   }, [modelPath, side])
 
-  // Auto-apply metal material when robot is loaded
+  // Auto-apply metal material when robot AND all meshes are loaded
   useEffect(() => {
-    if (robot) {
-      console.log('🤖 Robot loaded, applying metal material...')
-      // Use setTimeout to ensure all meshes are fully initialized
-      setTimeout(() => {
-        applyMetalMaterial(robot)
-      }, 100)
+    if (robot && meshesLoaded) {
+      console.log('🤖 Robot and all meshes loaded, applying metal material...')
+      applyMetalMaterial(robot)
     }
-  }, [robot])
+  }, [robot, meshesLoaded])
 
   // Apply joint rotations and position when they change
   useEffect(() => {

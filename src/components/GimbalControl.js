@@ -55,13 +55,13 @@ export default function GimbalControl({
       lineWidth={2}
       axisColors={['#ff2060', '#20df80', '#2080ff']}
       scale={scale}
-      visible={visible}
+      visible={false}
       onDrag={handleDrag}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
       rotation={[rotation.x, rotation.y, rotation.z]}
       offset={[0, 0, 0]}
-      disableRotations={false}
+      disableRotations={true}
       disableScaling={true}
       disableSliders={true}
     >
