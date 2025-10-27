@@ -189,6 +189,17 @@ export default function URDFHandModel({
     }
   }, [modelPath, side])
 
+  // Auto-apply metal material when robot is loaded
+  useEffect(() => {
+    if (robot) {
+      console.log('🤖 Robot loaded, applying metal material...')
+      // Use setTimeout to ensure all meshes are fully initialized
+      setTimeout(() => {
+        applyMetalMaterial(robot)
+      }, 100)
+    }
+  }, [robot])
+
   // Apply joint rotations and position when they change
   useEffect(() => {
     if (!robot || !groupRef.current) return
@@ -314,9 +325,11 @@ export default function URDFHandModel({
  */
 export function applyMetalMaterial(robotModel) {
   if (!robotModel) {
-    // console.warn('Cannot apply metal material: robot model is null')
+    console.warn('Cannot apply metal material: robot model is null')
     return
   }
+
+  console.log('🎨 Applying metal material to robot model...')
 
   // Create a stainless steel-like metal material
   const metalMaterial = new THREE.MeshStandardMaterial({
@@ -326,9 +339,14 @@ export function applyMetalMaterial(robotModel) {
     envMapIntensity: 1.0
   })
 
+  let meshCount = 0
+
   // Traverse all children and replace materials
   robotModel.traverse((child) => {
     if (child.isMesh) {
+      meshCount++
+      console.log(`  → Found mesh: ${child.name || 'unnamed'}`)
+
       // Dispose old material to prevent memory leaks
       if (child.material) {
         if (Array.isArray(child.material)) {
@@ -344,5 +362,5 @@ export function applyMetalMaterial(robotModel) {
     }
   })
 
-  // console.log('Metal material applied to robot model')
+  console.log(`✅ Metal material applied to ${meshCount} meshes`)
 }
