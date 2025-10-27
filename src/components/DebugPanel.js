@@ -7,7 +7,6 @@ import { landmarksToJointRotations } from '../utils/handKinematics'
  */
 export default function DebugPanel({
   onReset,
-  onClose,
   handTrackingData // Raw landmark position data from MediaPipe
 }) {
   // State for selected hand
@@ -63,7 +62,7 @@ export default function DebugPanel({
   return (
     <div style={{
       position: 'absolute',
-      bottom: 10,
+      bottom: 60,
       left: 10,
       zIndex: 20,
       backgroundColor: 'rgba(0, 0, 0, 0.6)',
@@ -77,7 +76,7 @@ export default function DebugPanel({
       maxHeight: '90vh',
       overflowY: 'auto'
     }}>
-      {/* Hand Selection Toggle and Close Button */}
+      {/* Hand Selection Toggle */}
       <div style={{
         display: 'flex',
         gap: '4px',
@@ -125,35 +124,6 @@ export default function DebugPanel({
           }}
         >
           RIGHT
-        </button>
-
-        {/* Spacer */}
-        <div style={{ flex: 1 }} />
-
-        {/* Close Button */}
-        <button
-          onClick={onClose}
-          style={{
-            padding: '4px 8px',
-            fontSize: '11px',
-            backgroundColor: 'rgba(239, 68, 68, 0.8)',
-            color: 'white',
-            border: '1px solid rgba(255, 100, 100, 0.5)',
-            borderRadius: '3px',
-            cursor: 'pointer',
-            fontWeight: 'bold',
-            fontFamily: 'monospace'
-          }}
-          onMouseOver={(e) => {
-            e.currentTarget.style.backgroundColor = 'rgba(239, 68, 68, 1)'
-            e.currentTarget.style.borderColor = 'rgba(255, 100, 100, 0.8)'
-          }}
-          onMouseOut={(e) => {
-            e.currentTarget.style.backgroundColor = 'rgba(239, 68, 68, 0.8)'
-            e.currentTarget.style.borderColor = 'rgba(255, 100, 100, 0.5)'
-          }}
-        >
-          ✕
         </button>
       </div>
 

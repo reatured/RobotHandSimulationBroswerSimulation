@@ -562,7 +562,7 @@ const InspectorPanel = ({
                                 <div key={axis} className="mb-2 last:mb-0">
                                   <div className="flex items-center justify-between mb-1">
                                     <label className="text-[10px] font-medium text-panel-muted-foreground">
-                                      {axis.toUpperCase()} ok
+                                      {axis.toUpperCase()}
                                     </label>
                                     <span className="text-[10px] text-panel-muted-foreground">
                                       {(currentValue * 180 / Math.PI).toFixed(0)}°
@@ -657,8 +657,8 @@ const InspectorPanel = ({
             <span className="text-xs font-medium text-panel-foreground">Display</span>
           </div>
           <div className="grid grid-cols-3 gap-1">
-            {/* Gimbals */}
-            <button
+            {/* Gimbals - HIDDEN FOR DEMO */}
+            {/* <button
               onClick={() => onShowGimbalsChange(!showGimbals)}
               className={cn(
                 "px-2 py-1.5 rounded text-[10px] font-medium transition-all",
@@ -668,7 +668,7 @@ const InspectorPanel = ({
               )}
             >
               Gimbals
-            </button>
+            </button> */}
 
             {/* Axes */}
             <button
@@ -709,8 +709,8 @@ const InspectorPanel = ({
               Labels
             </button>
 
-            {/* Multi-DoF */}
-            <button
+            {/* Multi-DoF - HIDDEN FOR DEMO */}
+            {/* <button
               onClick={() => {
                 const newValue = !useMultiDoF
                 onUseMultiDoFChange(newValue)
@@ -724,10 +724,10 @@ const InspectorPanel = ({
               )}
             >
               Multi-DoF
-            </button>
+            </button> */}
 
-            {/* Quaternion Tracking */}
-            {isCameraMode && (
+            {/* Quaternion Tracking - HIDDEN FOR DEMO */}
+            {/* {isCameraMode && (
               <button
                 onClick={() => {
                   const newValue = !useQuaternionTracking
@@ -743,7 +743,7 @@ const InspectorPanel = ({
               >
                 Quaternion
               </button>
-            )}
+            )} */}
 
             {/* Thumb 3DOF Addon (only when quaternion tracking is enabled) */}
             {isCameraMode && useQuaternionTracking && (
@@ -785,8 +785,8 @@ const InspectorPanel = ({
               </button>
             )}
 
-            {/* Position (camera mode only) */}
-            {isCameraMode ? (
+            {/* Position (camera mode only) - HIDDEN FOR DEMO */}
+            {/* {isCameraMode ? (
               <button
                 onClick={() => onEnableCameraPositionChange(!enableCameraPosition)}
                 className={cn(
@@ -802,7 +802,7 @@ const InspectorPanel = ({
               <div className="px-2 py-1.5 rounded bg-muted/10 text-[10px] text-muted-foreground/50 text-center">
                 Position
               </div>
-            )}
+            )} */}
 
             {/* Wrist (camera mode only) */}
             {isCameraMode ? (

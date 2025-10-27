@@ -191,11 +191,11 @@ export default function App() {
   // Joint gimbals visibility toggle (default: disabled)
   const [showJointGimbals, setShowJointGimbals] = useState(false)
 
-  // Coordinate axes visibility toggle (default: enabled for debugging)
-  const [showAxes, setShowAxes] = useState(true)
+  // Coordinate axes visibility toggle (default: disabled)
+  const [showAxes, setShowAxes] = useState(false)
 
   // Debug labels visibility toggle (default: disabled)
-  const [showDebugLabels, setShowDebugLabels] = useState(true)
+  const [showDebugLabels, setShowDebugLabels] = useState(false)
 
   // Camera position tracking toggle (default: disabled)
   const [enableCameraPosition, setEnableCameraPosition] = useState(false)
@@ -209,8 +209,8 @@ export default function App() {
     right: null
   })
 
-  // IK visualization toggle (default: enabled)
-  const [showIKVisualization, setShowIKVisualization] = useState(true)
+  // IK visualization toggle (default: disabled)
+  const [showIKVisualization, setShowIKVisualization] = useState(false)
 
   const [selectedJoint, setSelectedJoint] = useState('wrist')
   const [selectedHand, setSelectedHand] = useState('left') // Which hand to control in manual mode
@@ -650,47 +650,54 @@ export default function App() {
         </div>
       )}
 
-      {/* Debug Panel - shows 3-axis rotation data from position conversion */}
-      {showDebugPanel && (
+      {/* Debug Panel - shows 3-axis rotation data from position conversion (disabled on mobile) */}
+      {showDebugPanel && !isMobile && (
         <DebugPanel
           handTrackingData={handTrackingData}
           onReset={handleResetGimbals}
-          onClose={() => setShowDebugPanel(false)}
         />
       )}
 
-      {/* Open Debug Panel Button - shows when panel is closed */}
-      {!showDebugPanel && (
-        <button
-          onClick={() => setShowDebugPanel(true)}
-          style={{
-            position: 'absolute',
-            bottom: '10px',
-            left: '10px',
-            padding: '8px 12px',
-            fontSize: '11px',
-            backgroundColor: 'rgba(100, 150, 255, 0.9)',
-            color: 'white',
-            border: '1px solid rgba(150, 200, 255, 0.5)',
-            borderRadius: '4px',
-            cursor: 'pointer',
-            fontWeight: '600',
-            fontFamily: 'monospace',
-            zIndex: 20,
-            transition: 'all 0.2s'
-          }}
-          onMouseOver={(e) => {
+      {/* Debug Panel Toggle Button - Always visible */}
+      <button
+        onClick={() => setShowDebugPanel(!showDebugPanel)}
+        style={{
+          position: 'absolute',
+          bottom: '10px',
+          left: '10px',
+          padding: '8px 12px',
+          fontSize: '11px',
+          backgroundColor: showDebugPanel ? 'rgba(255, 100, 100, 0.9)' : 'rgba(100, 150, 255, 0.9)',
+          color: 'white',
+          border: showDebugPanel ? '1px solid rgba(255, 150, 150, 0.5)' : '1px solid rgba(150, 200, 255, 0.5)',
+          borderRadius: '4px',
+          cursor: 'pointer',
+          fontWeight: '600',
+          fontFamily: 'monospace',
+          zIndex: 20,
+          transition: 'all 0.2s'
+        }}
+        onMouseOver={(e) => {
+          if (showDebugPanel) {
+            e.currentTarget.style.backgroundColor = 'rgba(255, 100, 100, 1)'
+            e.currentTarget.style.borderColor = 'rgba(255, 150, 150, 0.8)'
+          } else {
             e.currentTarget.style.backgroundColor = 'rgba(100, 150, 255, 1)'
             e.currentTarget.style.borderColor = 'rgba(150, 200, 255, 0.8)'
-          }}
-          onMouseOut={(e) => {
+          }
+        }}
+        onMouseOut={(e) => {
+          if (showDebugPanel) {
+            e.currentTarget.style.backgroundColor = 'rgba(255, 100, 100, 0.9)'
+            e.currentTarget.style.borderColor = 'rgba(255, 150, 150, 0.5)'
+          } else {
             e.currentTarget.style.backgroundColor = 'rgba(100, 150, 255, 0.9)'
             e.currentTarget.style.borderColor = 'rgba(150, 200, 255, 0.5)'
-          }}
-        >
-          Show Debug
-        </button>
-      )}
+          }
+        }}
+      >
+        {showDebugPanel ? 'Hide Debug' : 'Show Debug'}
+      </button>
 
       {/* Inspector Panel Toggle Button */}
       <button
@@ -698,7 +705,7 @@ export default function App() {
         style={{
           position: 'absolute',
           bottom: '10px',
-          left: showDebugPanel ? '10px' : '110px',
+          left: '120px',
           padding: '8px 12px',
           fontSize: '11px',
           backgroundColor: showControlPanel ? 'rgba(255, 100, 100, 0.9)' : 'rgba(100, 200, 100, 0.9)',
