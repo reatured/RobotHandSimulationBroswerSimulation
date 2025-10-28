@@ -209,7 +209,7 @@ export default function Scene3D({
       )}
 
       {/* RealHand 3D text logo on the ground */}
-      <group position={[0, -0.27, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+      <group position={[0, -0.27, 0]} rotation={[-Math.PI / 2, 0, -Math.PI ]}>
         {/* Debug sphere at origin of this group */}
 
 
