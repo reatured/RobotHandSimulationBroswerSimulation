@@ -571,11 +571,11 @@ function calculateThumbJointAngles(landmarks) {
   const rollAngle = sign >= 0 ? rollAngleMagnitude : -rollAngleMagnitude
 
   return {
-    cmc: cmcAngle * 1.1,
-    mcp: mcpAngle * 1.1,
+    cmc: cmcAngle * 1.3,
+    mcp: mcpAngle * 1.2,
     ip: ipAngle * 1.1,
-    yaw: yawAngle,
-    roll: rollAngle
+    yaw: yawAngle * 1.1,
+    roll: rollAngle * 1.1
   }
 }
 
