@@ -1,6 +1,6 @@
 import { Canvas, useThree } from '@react-three/fiber'
 import { OrbitControls, Grid, Environment, Select } from '@react-three/drei'
-import { useRef, useEffect, useMemo } from 'react'
+import { useRef, useEffect, useMemo, useState } from 'react'
 import * as THREE from 'three'
 import HandModel from './HandModel'
 import GimbalControl from './GimbalControl'
@@ -8,6 +8,7 @@ import DebugLabels from './DebugLabels'
 import IKVisualization from './IKVisualization'
 import { useSceneGraph } from '../editor/useSceneGraph'
 import { ThumbJointVisualizer } from '../ik'
+import ThumbBoneVisualizer from './ThumbBoneVisualizer'
 
 // Custom gradient ground plane
 function GradientGround() {
@@ -128,10 +129,15 @@ export default function Scene3D({
   showIKVisualization = true,
   show3DCursor = false,
   onManualLandmarkDrag = null,
-  cameraLandmarks = { left: null, right: null }
+  cameraLandmarks = { left: null, right: null },
+  showThumbBones = true
 }) {
   // Ref for OrbitControls to pass to gimbals
   const orbitControlsRef = useRef()
+
+  // State to store loaded robot objects
+  const [leftRobot, setLeftRobot] = useState(null)
+  const [rightRobot, setRightRobot] = useState(null)
 
   // Camera position - back view (looking from behind, natural perspective)
   const cameraPosition = [0, 0.5, -1]
@@ -230,12 +236,19 @@ export default function Scene3D({
               jointRotations={safeLeftRotations}
               cameraPosition={enableCameraPosition ? leftHandPosition : null}
               zRotationOffset={leftHandZRotation}
-              onRobotLoaded={onLeftRobotLoaded}
+              onRobotLoaded={(robot, metadata) => {
+                setLeftRobot(robot)
+                if (onLeftRobotLoaded) onLeftRobotLoaded(robot, metadata)
+              }}
               useMultiDoF={useMultiDoF}
               showJointGimbals={showJointGimbals}
               cameraLandmarks={cameraLandmarks.right}
               show3DCursor={show3DCursor}
             />
+            {/* Thumb Bone Visualizer for left hand */}
+            {showThumbBones && leftRobot && (
+              <ThumbBoneVisualizer robot={leftRobot} visible={true} scale={1} />
+            )}
           </GimbalControl>
         </group>
       )}
@@ -262,12 +275,19 @@ export default function Scene3D({
               jointRotations={safeRightRotations}
               cameraPosition={enableCameraPosition ? rightHandPosition : null}
               zRotationOffset={rightHandZRotation}
-              onRobotLoaded={onRightRobotLoaded}
+              onRobotLoaded={(robot, metadata) => {
+                setRightRobot(robot)
+                if (onRightRobotLoaded) onRightRobotLoaded(robot, metadata)
+              }}
               useMultiDoF={useMultiDoF}
               showJointGimbals={showJointGimbals}
               cameraLandmarks={cameraLandmarks.left}
               show3DCursor={show3DCursor}
             />
+            {/* Thumb Bone Visualizer for right hand */}
+            {showThumbBones && rightRobot && (
+              <ThumbBoneVisualizer robot={rightRobot} visible={true} scale={1} />
+            )}
           </GimbalControl>
         </group>
       )}
