@@ -422,10 +422,160 @@ function calculateFingerJointAngles(landmarks, mcpIdx) {
   // Calculate angle between projected vectors
   const dipAngle = projectedDipToTip.angleTo(projectedPipToDipForDip)
 
+  // Apply 1.1x modifier to amplify finger bending
   return {
-    mcp: mcpAngle,
-    pip: pipAngle,
-    dip: dipAngle
+    mcp: mcpAngle * 1.1,
+    pip: pipAngle * 1.1,
+    dip: dipAngle * 1.1
+  }
+}
+
+/**
+ * Calculate combined joint angles for thumb
+ *
+ * The thumb has a unique structure with 5 degrees of freedom:
+ * - CMC (Carpometacarpal): Base joint with flexion/extension and abduction/adduction
+ * - MCP (Metacarpophalangeal): Middle joint with flexion/extension
+ * - IP (Interphalangeal): Tip joint with flexion/extension
+ * - Yaw: Thumb abduction/adduction angle
+ * - Roll: Thumb rotation around its longitudinal axis
+ *
+ * @param {Array} landmarks - All hand landmarks (21 points)
+ * @returns {Object} - Joint angles {cmc, mcp, ip, yaw, roll} in radians
+ */
+function calculateThumbJointAngles(landmarks) {
+  // Get required landmarks
+  const wrist = landmarks[LANDMARKS.WRIST]           // Point 0
+  const thumbCmc = landmarks[LANDMARKS.THUMB_CMC]    // Point 1
+  const thumbMcp = landmarks[LANDMARKS.THUMB_MCP]    // Point 2
+  const thumbIp = landmarks[LANDMARKS.THUMB_IP]      // Point 3
+  const thumbTip = landmarks[LANDMARKS.THUMB_TIP]    // Point 4
+  const indexMcp = landmarks[LANDMARKS.INDEX_MCP]    // Point 5
+  const middleMcp = landmarks[LANDMARKS.MIDDLE_MCP]  // Point 9
+  const ringMcp = landmarks[LANDMARKS.RING_MCP]      // Point 13
+  const pinkyMcp = landmarks[LANDMARKS.PINKY_MCP]    // Point 17
+
+  // YAW CALCULATION
+  // Step 1: vec1 = vector from thumb CMC to thumb MCP (point 2 - 1)
+  const vec1 = new THREE.Vector3(
+    thumbMcp.x - thumbCmc.x,
+    thumbMcp.y - thumbCmc.y,
+    thumbMcp.z - thumbCmc.z
+  )
+
+  // Step 2: vec2 = vector from wrist to midpoint of middle and ring MCP (plane normal)
+  const midX = (middleMcp.x + ringMcp.x) / 2
+  const midY = (middleMcp.y + ringMcp.y) / 2
+  const midZ = (middleMcp.z + ringMcp.z) / 2
+  const vec2 = new THREE.Vector3(
+    midX - wrist.x,
+    midY - wrist.y,
+    midZ - wrist.z
+  )
+  vec2.normalize()
+
+  // Step 3: Project vec1 onto the plane perpendicular to vec2
+  const vec1Dot = vec1.dot(vec2)
+  const projectedVec1 = vec1.clone().sub(vec2.clone().multiplyScalar(vec1Dot))
+  projectedVec1.normalize()
+
+  // Step 4: vec3 = vector from pinky to index (point 5 - 17), projected onto plane
+  const vec3Raw = new THREE.Vector3(
+    indexMcp.x - pinkyMcp.x,
+    indexMcp.y - pinkyMcp.y,
+    indexMcp.z - pinkyMcp.z
+  )
+  const vec3Dot = vec3Raw.dot(vec2)
+  const vec3 = vec3Raw.clone().sub(vec2.clone().multiplyScalar(vec3Dot))
+  vec3.normalize()
+
+  // Step 5: Calculate yaw angle between projected vec1 and vec3
+  const yawAngle = projectedVec1.angleTo(vec3)
+
+  // CMC PITCH CALCULATION
+  // Vector from wrist to CMC (point 1 - 0)
+  const cmcVec = new THREE.Vector3(
+    thumbCmc.x - wrist.x,
+    thumbCmc.y - wrist.y,
+    thumbCmc.z - wrist.z
+  )
+  const cmcVecNormalized = cmcVec.normalize()
+  const vec1Normalized = vec1.clone().normalize()
+
+  // Calculate CMC angle between (1-0) and (2-1)
+  const cmcAngle = cmcVecNormalized.angleTo(vec1Normalized)
+
+  // MCP PITCH CALCULATION
+  // Vector from thumb MCP to IP (point 3 - 2)
+  const pitchVec = new THREE.Vector3(
+    thumbIp.x - thumbMcp.x,
+    thumbIp.y - thumbMcp.y,
+    thumbIp.z - thumbMcp.z
+  )
+  const pitchVecNormalized = pitchVec.normalize()
+
+  // Calculate MCP angle between (2-1) and (3-2)
+  const mcpAngle = vec1Normalized.angleTo(pitchVecNormalized)
+
+  // IP PITCH CALCULATION
+  // Vector from IP to TIP (point 4 - 3)
+  const ipVec = new THREE.Vector3(
+    thumbTip.x - thumbIp.x,
+    thumbTip.y - thumbIp.y,
+    thumbTip.z - thumbIp.z
+  )
+  const ipVecNormalized = ipVec.normalize()
+
+  // Calculate IP angle between (3-2) and (4-3)
+  const ipAngle = pitchVecNormalized.angleTo(ipVecNormalized)
+
+  // ROLL CALCULATION
+  // Step 1: Calculate palm plane normal from (5-0) and (17-0)
+  const wristToIndex = new THREE.Vector3(
+    indexMcp.x - wrist.x,
+    indexMcp.y - wrist.y,
+    indexMcp.z - wrist.z
+  )
+  const wristToPinky = new THREE.Vector3(
+    pinkyMcp.x - wrist.x,
+    pinkyMcp.y - wrist.y,
+    pinkyMcp.z - wrist.z
+  )
+  const palmNormal = new THREE.Vector3().crossVectors(wristToIndex, wristToPinky).normalize()
+
+  // Step 2: vec1 for roll = project (4-2) onto palm plane
+  const thumbMcpToTip = new THREE.Vector3(
+    thumbTip.x - thumbMcp.x,
+    thumbTip.y - thumbMcp.y,
+    thumbTip.z - thumbMcp.z
+  )
+  const rollVec1Dot = thumbMcpToTip.dot(palmNormal)
+  const rollVec1 = thumbMcpToTip.clone().sub(palmNormal.clone().multiplyScalar(rollVec1Dot))
+  rollVec1.normalize()
+
+  // Step 3: vec2 for roll = midpoint vector (already calculated and normalized as vec2)
+  // Reuse vec2 from yaw calculation
+
+  // Step 4: Calculate unsigned roll angle
+  const rollAngleMagnitude = rollVec1.angleTo(vec2)
+
+  // Step 5: Determine sign using cross product with palm normal
+  // Cross product: vec2 × rollVec1
+  const crossProduct = new THREE.Vector3().crossVectors(vec2, rollVec1)
+
+  // Dot with palm normal to determine rotation direction
+  // Positive = rotation toward pinky side, Negative = rotation toward index side
+  const sign = crossProduct.dot(palmNormal)
+
+  // Apply sign: positive toward pinky, negative toward index
+  const rollAngle = sign >= 0 ? rollAngleMagnitude : -rollAngleMagnitude
+
+  return {
+    cmc: cmcAngle * 1.1,
+    mcp: mcpAngle * 1.1,
+    ip: ipAngle * 1.1,
+    yaw: yawAngle,
+    roll: rollAngle
   }
 }
 
@@ -525,42 +675,13 @@ export function landmarksToJointRotations(landmarks, handedness = 'Right') {
   const joints = {}
 
   // THUMB - Special handling due to different anatomy
-  // Thumb has CMC (carpometacarpal) which provides opposition
-  const thumbCmcCurl = calculateFingerCurl(
-    landmarks,
-    LANDMARKS.WRIST,
-    LANDMARKS.THUMB_CMC,
-    LANDMARKS.THUMB_MCP
-  )
-  const thumbMcpCurl = calculateFingerCurl(
-    landmarks,
-    LANDMARKS.THUMB_CMC,
-    LANDMARKS.THUMB_MCP,
-    LANDMARKS.THUMB_IP
-  )
-  const thumbIpCurl = calculateFingerCurl(
-    landmarks,
-    LANDMARKS.THUMB_MCP,
-    LANDMARKS.THUMB_IP,
-    LANDMARKS.THUMB_TIP
-  )
-
-  // Thumb opposition/abduction (angle relative to index finger)
-  const thumbAbduction = calculateFingerSpread(
-    landmarks,
-    LANDMARKS.THUMB_MCP,
-    LANDMARKS.INDEX_MCP
-  )
-  // Calculate thumb yaw from hand landmarks
-  joints.thumb_yaw = calculateThumbYaw(landmarks)
-
-  // Calculate thumb roll from hand landmarks
-  joints.thumb_roll = 0.56 - calculateThumbRoll(landmarks)
-
-  joints.thumb_mcp = thumbCmcCurl
-  joints.thumb_pip = thumbMcpCurl
-  joints.thumb_dip = thumbIpCurl // DIP typically follows IP
-  joints.thumb_tip = thumbIpCurl * 0.8
+  const thumbAngles = calculateThumbJointAngles(landmarks)
+  joints.thumb_mcp = thumbAngles.cmc
+  joints.thumb_pip = thumbAngles.mcp
+  joints.thumb_dip = thumbAngles.ip
+  joints.thumb_tip = thumbAngles.ip * 0.8
+  joints.thumb_yaw = thumbAngles.yaw
+  joints.thumb_roll = thumbAngles.roll
 
   
 

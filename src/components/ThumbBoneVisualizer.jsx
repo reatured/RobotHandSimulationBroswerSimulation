@@ -74,7 +74,12 @@ function JointAxisHelper({ joint, jointName, color }) {
  * Main thumb bone visualizer component
  * Automatically finds and displays all thumb joints from the URDF robot
  */
-export default function ThumbBoneVisualizer({ robot, visible = true, scale = 1 }) {
+export default function ThumbBoneVisualizer({
+  robot,
+  visible = true,
+  scale = 1,
+  rotation = [0, 0, 0]
+}) {
   const thumbJointsRef = useRef([])
 
   // Find thumb joints when robot loads
@@ -113,7 +118,7 @@ export default function ThumbBoneVisualizer({ robot, visible = true, scale = 1 }
   }
 
   return (
-    <group scale={scale}>
+    <group rotation={rotation} scale={scale}>
       {thumbJointsRef.current.map(({ name, joint }) => (
         <JointAxisHelper
           key={name}

@@ -232,7 +232,7 @@ export default function App() {
   // 🔥 STEP 9: Joint config state for multi-DoF support
   const [leftHandJointConfig, setLeftHandJointConfig] = useState(null)
   const [rightHandJointConfig, setRightHandJointConfig] = useState(null)
-  const [useMultiDoF, setUseMultiDoF] = useState(false)
+  const [useMultiDoF, setUseMultiDoF] = useState(true)
 
   // Quaternion tracking system toggle (default: disabled)
   const [useQuaternionTracking, setUseQuaternionTracking] = useState(false)

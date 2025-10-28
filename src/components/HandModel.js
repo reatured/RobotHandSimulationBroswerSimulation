@@ -4,6 +4,7 @@ import AbilityHand from '../models/AbilityHand'
 import InspireHand from '../models/InspireHand'
 import URDFHandModel from './URDFHandModel'
 import ThumbTargetCursor from './ThumbTargetCursor'
+import ThumbBoneVisualizer from './ThumbBoneVisualizer'
 import { hasURDFSupport } from '../utils/urdfConfig'
 
 function HandModelInner({
@@ -17,8 +18,18 @@ function HandModelInner({
   useMultiDoF = false,
   showJointGimbals = false,
   cameraLandmarks = null,
-  onPalmLengthCalculated = null
+  onPalmLengthCalculated = null,
+  showThumbBones = false,
+  thumbBonesRotation = [0, 0, 0]
 }) {
+  // State to store loaded robot
+  const [robot, setRobot] = useState(null)
+
+  // Wrapper for onRobotLoaded to capture robot object
+  const handleRobotLoaded = (loadedRobot, metadata) => {
+    setRobot(loadedRobot)
+    if (onRobotLoaded) onRobotLoaded(loadedRobot, metadata)
+  }
   // Select the appropriate model component based on modelPath
   const renderModel = () => {
     switch (modelPath) {
@@ -32,7 +43,7 @@ function HandModelInner({
               jointRotations={jointRotations}
               position={[0, 0, 0]}
               cameraPosition={cameraPosition}
-              onRobotLoaded={onRobotLoaded}
+              onRobotLoaded={handleRobotLoaded}
               useMultiDoF={useMultiDoF}
               showJointGimbals={showJointGimbals}
               onPalmLengthCalculated={onPalmLengthCalculated}
@@ -71,7 +82,7 @@ function HandModelInner({
               jointRotations={jointRotations}
               position={[0, 0, 0]}
               cameraPosition={cameraPosition}
-              onRobotLoaded={onRobotLoaded}
+              onRobotLoaded={handleRobotLoaded}
               useMultiDoF={useMultiDoF}
               showJointGimbals={showJointGimbals}
               onPalmLengthCalculated={onPalmLengthCalculated}
@@ -107,6 +118,15 @@ function HandModelInner({
   return (
     <group position={position} rotation={[0, 0, zRotationOffset]}>
       {renderModel()}
+      {/* Thumb Bone Visualizer */}
+      {showThumbBones && robot && (
+        <ThumbBoneVisualizer
+          robot={robot}
+          visible={true}
+          scale={1}
+          rotation={thumbBonesRotation}
+        />
+      )}
     </group>
   )
 }
