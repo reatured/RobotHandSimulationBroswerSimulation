@@ -186,16 +186,16 @@ const ModelSelectorModal = memo(({
                 )}
 
                 {/* Preview Image */}
-                {imagePath && (
-                  <div style={{
-                    width: '100%',
-                    paddingTop: '100%',
-                    position: 'relative',
-                    marginBottom: '12px',
-                    borderRadius: '6px',
-                    overflow: 'hidden',
-                    backgroundColor: 'rgba(255, 255, 255, 0.05)'
-                  }}>
+                <div style={{
+                  width: '100%',
+                  paddingTop: '100%',
+                  position: 'relative',
+                  marginBottom: '12px',
+                  borderRadius: '6px',
+                  overflow: 'hidden',
+                  backgroundColor: 'rgba(255, 255, 255, 0.05)'
+                }}>
+                  {imagePath ? (
                     <img
                       src={imagePath}
                       alt={model.name}
@@ -209,10 +209,43 @@ const ModelSelectorModal = memo(({
                       }}
                       onError={(e) => {
                         e.currentTarget.style.display = 'none'
+                        const placeholder = e.currentTarget.nextSibling
+                        if (placeholder) {
+                          placeholder.style.display = 'flex'
+                        }
                       }}
                     />
+                  ) : null}
+                  {/* Placeholder for models without images */}
+                  <div style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    display: imagePath ? 'none' : 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: 'rgba(255, 255, 255, 0.03)',
+                    color: 'rgba(255, 255, 255, 0.3)'
+                  }}>
+                    <div style={{
+                      fontSize: '32px',
+                      marginBottom: '8px'
+                    }}>
+                      🤖
+                    </div>
+                    <div style={{
+                      fontSize: '10px',
+                      fontWeight: '500',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px'
+                    }}>
+                      No Preview
+                    </div>
                   </div>
-                )}
+                </div>
 
                 {/* Model Info */}
                 <div style={{

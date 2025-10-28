@@ -1,5 +1,5 @@
 import { Canvas, useThree } from '@react-three/fiber'
-import { OrbitControls, Grid, Environment, Select } from '@react-three/drei'
+import { OrbitControls, Grid, Environment, Select, Html, Text, Center } from '@react-three/drei'
 import { useRef, useEffect, useMemo } from 'react'
 import * as THREE from 'three'
 import HandModel from './HandModel'
@@ -129,7 +129,9 @@ export default function Scene3D({
   show3DCursor = false,
   onManualLandmarkDrag = null,
   cameraLandmarks = { left: null, right: null },
-  showThumbBones = false
+  showThumbBones = false,
+  leftModelShortName = '',
+  rightModelShortName = ''
 }) {
   // Ref for OrbitControls to pass to gimbals
   const orbitControlsRef = useRef()
@@ -206,6 +208,31 @@ export default function Scene3D({
         <axesHelper args={[0.5]} position={[0, -0.29, 0]} />
       )}
 
+      {/* RealHand 3D text logo on the ground */}
+      <group position={[0, -0.27, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        {/* Debug sphere at origin of this group */}
+
+
+        <Text
+          position={[0, 0, 0]}
+          fontSize={0.18}
+          color="white"
+          anchorX="center"
+          anchorY="middle"
+          outlineWidth={0.005}
+          outlineColor="#4a90e2"
+        >
+          REALHAND
+          <meshStandardMaterial
+            color="#ffffff"
+            metalness={0.7}
+            roughness={0.2}
+            emissive="#4a90e2"
+            emissiveIntensity={0.3}
+          />
+        </Text>
+      </group>
+
       {/* Left Hand Model with Gimbal Control */}
       {leftModel && (
         <group position={[0.3, 0, 0]}>
@@ -213,8 +240,8 @@ export default function Scene3D({
           {/* Local axes at hand mesh group level - does not rotate */}
           {showAxes && <axesHelper args={[0.15]} />}
 
-          
-            
+
+
           <GimbalControl
             position={[0, 0, 0]}
             rotation={leftCombinedRotation}
@@ -240,6 +267,27 @@ export default function Scene3D({
               thumbBonesRotation={[Math.PI /2, -Math.PI /2, 0]}
             />
           </GimbalControl>
+
+          {/* Model name label below left hand */}
+          {leftModelShortName && (
+            <Html position={[0, -0.15, 0]} center>
+              <div style={{
+                color: 'white',
+                fontSize: '18px',
+                fontWeight: '600',
+                fontFamily: 'monospace',
+                backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                padding: '6px 14px',
+                borderRadius: '4px',
+                whiteSpace: 'nowrap',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+                pointerEvents: 'none',
+                userSelect: 'none'
+              }}>
+                {leftModelShortName}
+              </div>
+            </Html>
+          )}
         </group>
       )}
 
@@ -274,6 +322,27 @@ export default function Scene3D({
               thumbBonesRotation={[0, 0, 0]}
             />
           </GimbalControl>
+
+          {/* Model name label below right hand */}
+          {rightModelShortName && (
+            <Html position={[0, -0.15, 0]} center>
+              <div style={{
+                color: 'white',
+                fontSize: '18px',
+                fontWeight: '600',
+                fontFamily: 'monospace',
+                backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                padding: '6px 14px',
+                borderRadius: '4px',
+                whiteSpace: 'nowrap',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+                pointerEvents: 'none',
+                userSelect: 'none'
+              }}>
+                {rightModelShortName}
+              </div>
+            </Html>
+          )}
         </group>
       )}
 

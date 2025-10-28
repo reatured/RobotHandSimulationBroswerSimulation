@@ -16,37 +16,37 @@ const isMobileDevice = () => {
 
 // Available hand models configuration
 const HAND_MODELS = [
-  { id: 'ability_left', name: 'Ability Hand (Left)', path: 'ability_hand', side: 'left' },
-  { id: 'ability_right', name: 'Ability Hand (Right)', path: 'ability_hand', side: 'right' },
-  { id: 'shadow_left', name: 'Shadow Hand (Left)', path: 'shadow_hand', side: 'left' },
-  { id: 'shadow_right', name: 'Shadow Hand (Right)', path: 'shadow_hand', side: 'right' },
-  { id: 'allegro_left', name: 'Allegro Hand (Left)', path: 'allegro_hand', side: 'left' },
-  { id: 'allegro_right', name: 'Allegro Hand (Right)', path: 'allegro_hand', side: 'right' },
-  { id: 'inspire_left', name: 'Inspire Hand (Left)', path: 'inspire_hand', side: 'left' },
-  { id: 'inspire_right', name: 'Inspire Hand (Right)', path: 'inspire_hand', side: 'right' },
-  { id: 'leap_left', name: 'Leap Hand (Left)', path: 'leap_hand', side: 'left' },
-  { id: 'leap_right', name: 'Leap Hand (Right)', path: 'leap_hand', side: 'right' },
-  { id: 'schunk_left', name: 'Schunk SVH Hand (Left)', path: 'schunk_hand', side: 'left' },
-  { id: 'schunk_right', name: 'Schunk SVH Hand (Right)', path: 'schunk_hand', side: 'right' },
-  { id: 'barrett', name: 'Barrett Hand', path: 'barrett_hand', side: null },
-  { id: 'dclaw', name: 'DClaw Gripper', path: 'dclaw_gripper', side: null },
-  { id: 'panda', name: 'Panda Gripper', path: 'panda_gripper', side: null },
-  { id: 'linker_l6_left', name: 'Linker Hand L6 (Left)', path: 'linker_l6', side: 'left' },
-  { id: 'linker_l6_right', name: 'Linker Hand L6 (Right)', path: 'linker_l6', side: 'right' },
-  { id: 'linker_l10_left', name: 'Linker Hand L10 (Left)', path: 'linker_l10', side: 'left' },
-  { id: 'linker_l10_right', name: 'Linker Hand L10 (Right)', path: 'linker_l10', side: 'right' },
-  { id: 'linker_l20_left', name: 'Linker Hand L20 (Left)', path: 'linker_l20', side: 'left' },
-  { id: 'linker_l20_right', name: 'Linker Hand L20 (Right)', path: 'linker_l20', side: 'right' },
-  { id: 'linker_l20pro_right', name: 'Linker Hand L20 Pro (Right)', path: 'linker_l20pro', side: 'right' },
-  { id: 'linker_l21_left', name: 'Linker Hand L21 (Left)', path: 'linker_l21', side: 'left' },
-  { id: 'linker_l21_right', name: 'Linker Hand L21 (Right)', path: 'linker_l21', side: 'right' },
-  { id: 'linker_l25_left', name: 'Linker Hand L25 (Left)', path: 'linker_l25', side: 'left' },
-  { id: 'linker_l25_right', name: 'Linker Hand L25 (Right)', path: 'linker_l25', side: 'right' },
-  { id: 'linker_l30_right', name: 'Linker Hand L30 (Right)', path: 'linker_l30', side: 'right' },
-  { id: 'linker_o6_left', name: 'Linker Hand O6 (Left)', path: 'linker_o6', side: 'left' },
-  { id: 'linker_o6_right', name: 'Linker Hand O6 (Right)', path: 'linker_o6', side: 'right' },
-  { id: 'linker_o7_left', name: 'Linker Hand O7 (Left)', path: 'linker_o7', side: 'left' },
-  { id: 'linker_o7_right', name: 'Linker Hand O7 (Right)', path: 'linker_o7', side: 'right' },
+  { id: 'ability_left', name: 'Ability Hand (Left)', shortName: 'Ability', path: 'ability_hand', side: 'left' },
+  { id: 'ability_right', name: 'Ability Hand (Right)', shortName: 'Ability', path: 'ability_hand', side: 'right' },
+  { id: 'shadow_left', name: 'Shadow Hand (Left)', shortName: 'Shadow', path: 'shadow_hand', side: 'left' },
+  { id: 'shadow_right', name: 'Shadow Hand (Right)', shortName: 'Shadow', path: 'shadow_hand', side: 'right' },
+  { id: 'allegro_left', name: 'Allegro Hand (Left)', shortName: 'Allegro', path: 'allegro_hand', side: 'left' },
+  { id: 'allegro_right', name: 'Allegro Hand (Right)', shortName: 'Allegro', path: 'allegro_hand', side: 'right' },
+  { id: 'inspire_left', name: 'Inspire Hand (Left)', shortName: 'Inspire', path: 'inspire_hand', side: 'left' },
+  { id: 'inspire_right', name: 'Inspire Hand (Right)', shortName: 'Inspire', path: 'inspire_hand', side: 'right' },
+  { id: 'leap_left', name: 'Leap Hand (Left)', shortName: 'Leap', path: 'leap_hand', side: 'left' },
+  { id: 'leap_right', name: 'Leap Hand (Right)', shortName: 'Leap', path: 'leap_hand', side: 'right' },
+  { id: 'schunk_left', name: 'Schunk SVH Hand (Left)', shortName: 'Schunk', path: 'schunk_hand', side: 'left' },
+  { id: 'schunk_right', name: 'Schunk SVH Hand (Right)', shortName: 'Schunk', path: 'schunk_hand', side: 'right' },
+  { id: 'barrett', name: 'Barrett Hand', shortName: 'Barrett', path: 'barrett_hand', side: null },
+  { id: 'dclaw', name: 'DClaw Gripper', shortName: 'DClaw', path: 'dclaw_gripper', side: null },
+  { id: 'panda', name: 'Panda Gripper', shortName: 'Panda', path: 'panda_gripper', side: null },
+  { id: 'linker_l6_left', name: 'RealHand L6 (Left)', shortName: 'L6', path: 'linker_l6', side: 'left' },
+  { id: 'linker_l6_right', name: 'RealHand L6 (Right)', shortName: 'L6', path: 'linker_l6', side: 'right' },
+  { id: 'linker_l10_left', name: 'RealHand L10 (Left)', shortName: 'L10', path: 'linker_l10', side: 'left' },
+  { id: 'linker_l10_right', name: 'RealHand L10 (Right)', shortName: 'L10', path: 'linker_l10', side: 'right' },
+  { id: 'linker_l20_left', name: 'RealHand L20 (Left)', shortName: 'L20', path: 'linker_l20', side: 'left' },
+  { id: 'linker_l20_right', name: 'RealHand L20 (Right)', shortName: 'L20', path: 'linker_l20', side: 'right' },
+  { id: 'linker_l20pro_right', name: 'RealHand L20 Pro (Right)', shortName: 'L20 Pro', path: 'linker_l20pro', side: 'right' },
+  { id: 'linker_l21_left', name: 'RealHand L21 (Left)', shortName: 'L21', path: 'linker_l21', side: 'left' },
+  { id: 'linker_l21_right', name: 'RealHand L21 (Right)', shortName: 'L21', path: 'linker_l21', side: 'right' },
+  { id: 'linker_l25_left', name: 'RealHand L25 (Left)', shortName: 'L25', path: 'linker_l25', side: 'left' },
+  { id: 'linker_l25_right', name: 'RealHand L25 (Right)', shortName: 'L25', path: 'linker_l25', side: 'right' },
+  { id: 'linker_l30_right', name: 'RealHand L30 (Right)', shortName: 'L30', path: 'linker_l30', side: 'right' },
+  { id: 'linker_o6_left', name: 'RealHand O6 (Left)', shortName: 'O6', path: 'linker_o6', side: 'left' },
+  { id: 'linker_o6_right', name: 'RealHand O6 (Right)', shortName: 'O6', path: 'linker_o6', side: 'right' },
+  { id: 'linker_o7_left', name: 'RealHand O7 (Left)', shortName: 'O7', path: 'linker_o7', side: 'left' },
+  { id: 'linker_o7_right', name: 'RealHand O7 (Right)', shortName: 'O7', path: 'linker_o7', side: 'right' },
 ]
 
 // Model display order and visibility configuration
@@ -55,8 +55,7 @@ const HAND_MODELS = [
 // - true = visible in modal, false = hidden
 // - Models not listed here will be hidden by default
 const MODEL_DISPLAY_ORDER = [
-  ['ability_left', true],
-  ['ability_right', true],
+
   ['linker_o6_left', true],
   ['linker_o6_right', true],
   ['linker_o7_left', true],
@@ -67,6 +66,16 @@ const MODEL_DISPLAY_ORDER = [
   ['linker_l20_right', true],
   ['linker_l20pro_right', true],
   ['linker_l30_right', true],
+  ['linker_l6_left', true],
+  ['linker_l6_right', true],
+  
+  ['linker_l21_left', true],
+  ['linker_l21_right', true],
+  ['linker_l25_left', true],
+  ['linker_l25_right', true],
+  ['linker_l30_right', true],
+    ['ability_left', true],
+  ['ability_right', true],
   ['shadow_left', true],
   ['shadow_right', true],
   ['allegro_left', true],
@@ -80,14 +89,9 @@ const MODEL_DISPLAY_ORDER = [
   ['barrett', true],
   ['dclaw', true],
   ['panda', true],
-  ['linker_l6_left', true],
-  ['linker_l6_right', true],
   
-  ['linker_l21_left', true],
-  ['linker_l21_right', true],
-  ['linker_l25_left', true],
-  ['linker_l25_right', true],
-  ['linker_l30_right', true],
+
+  
 
 ]
 
@@ -222,7 +226,7 @@ export default function App() {
 
   // Panel visibility states - camera preview always visible, control panel only on desktop, debug enabled
   const [showCameraPreview, setShowCameraPreview] = useState(true)
-  const [showControlPanel, setShowControlPanel] = useState(!isMobile)
+  const [showControlPanel, setShowControlPanel] = useState(false)
   const [showDebugPanel, setShowDebugPanel] = useState(false) // Debug panel toggle
 
   // Robot references for applying material changes
@@ -544,6 +548,8 @@ export default function App() {
         show3DCursor={show3DCursor}
         onManualLandmarkDrag={handleManualLandmarkDrag}
         cameraLandmarks={cameraLandmarks}
+        leftModelShortName={currentLeftModel?.shortName || ''}
+        rightModelShortName={currentRightModel?.shortName || ''}
       />
 
       <HandTrackingCamera
