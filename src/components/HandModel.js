@@ -137,7 +137,7 @@ export default function HandModel(props) {
     const multiplier = modelPalmLength / cameraPalmLength
     setPalmScaleMultiplier(multiplier)
 
-    console.log(`📐 Scale multiplier: ${multiplier.toFixed(4)} (model: ${modelPalmLength.toFixed(4)}, camera: ${cameraPalmLength.toFixed(4)})`)
+
   }, [modelPalmLength, cameraLandmarks])
 
   return (

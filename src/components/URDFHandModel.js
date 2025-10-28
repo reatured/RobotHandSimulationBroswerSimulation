@@ -278,6 +278,9 @@ export default function URDFHandModel({
 
           try {
             joint.setJointValue(clampedAngle)
+            if(urdfJointName.includes('index')) {
+            console.log(`🔧 [URDFHandModel] Set ${urdfJointName} = ${clampedAngle.toFixed(3)}`)
+            }
           } catch (error) {
             console.error(`Error setting joint value for ${urdfJointName}:`, error)
           }

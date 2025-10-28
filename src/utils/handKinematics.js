@@ -302,6 +302,134 @@ function calculateFingerMcpRoll(landmarks, mcpIdx, tipIdx) {
 }
 
 /**
+ * Calculate combined joint angles for a finger using palm plane projection for MCP
+ *
+ * MCP Calculation Approach:
+ * 1. Define palm plane using landmarks 0 (WRIST), 5 (INDEX_MCP), and 17 (PINKY_MCP)
+ * 2. Calculate palm plane normal vector using cross product
+ * 3. Create a second plane perpendicular to the palm plane using:
+ *    - The palm plane normal vector
+ *    - The vector from WRIST to MCP
+ * 4. Project the vector from MCP to PIP onto this second plane
+ * 5. Calculate the angle between:
+ *    - The projected MCP→PIP vector
+ *    - The WRIST→MCP vector
+ *
+ * PIP and DIP use standard 3-point angle calculations
+ *
+ * @param {Array} landmarks - All hand landmarks (21 points)
+ * @param {number} mcpIdx - MCP landmark index (PIP=mcpIdx+1, DIP=mcpIdx+2, TIP=mcpIdx+3)
+ * @returns {Object} - Joint angles {mcp: number, pip: number, dip: number} in radians
+ */
+function calculateFingerJointAngles(landmarks, mcpIdx) {
+  const pipIdx = mcpIdx + 1
+  const dipIdx = mcpIdx + 2
+  const tipIdx = mcpIdx + 3
+
+  // Get required landmarks
+  const wrist = landmarks[LANDMARKS.WRIST]           // Point 0
+  const indexMcp = landmarks[LANDMARKS.INDEX_MCP]    // Point 5
+  const pinkyMcp = landmarks[LANDMARKS.PINKY_MCP]    // Point 17
+  const mcp = landmarks[mcpIdx]
+  const pip = landmarks[pipIdx]
+  const dip = landmarks[dipIdx]
+  const tip = landmarks[tipIdx]
+
+  // MCP CALCULATION with palm plane projection
+  // Step 1: vec1 = normal of palm plane (cross product of vectors from wrist)
+  const wristToIndex = new THREE.Vector3(
+    indexMcp.x - wrist.x,
+    indexMcp.y - wrist.y,
+    indexMcp.z - wrist.z
+  )
+  const wristToPinky = new THREE.Vector3(
+    pinkyMcp.x - wrist.x,
+    pinkyMcp.y - wrist.y,
+    pinkyMcp.z - wrist.z
+  )
+  const vec1 = new THREE.Vector3().crossVectors(wristToIndex, wristToPinky).normalize()
+
+  // Step 2: vec2 = vector from wrist to MCP
+  const vec2 = new THREE.Vector3(
+    mcp.x - wrist.x,
+    mcp.y - wrist.y,
+    mcp.z - wrist.z
+  )
+
+  // Step 3: plane normal = cross product of vec1 and vec2
+  const planeNormal = new THREE.Vector3().crossVectors(vec1, vec2).normalize()
+
+  // Step 4: vec3 = project (pip - mcp) onto this plane
+  const pipToMcp = new THREE.Vector3(
+    pip.x - mcp.x,
+    pip.y - mcp.y,
+    pip.z - mcp.z
+  )
+  const dot = pipToMcp.dot(planeNormal)
+  const vec3 = pipToMcp.clone().sub(planeNormal.clone().multiplyScalar(dot))
+  vec3.normalize()
+
+  // Step 5: angle between vec3 and vec2
+  const vec2Normalized = vec2.clone().normalize()
+  const mcpAngle = vec3.angleTo(vec2Normalized)
+  console.log(`MCP Angle Calculation: vec3=${vec3.toArray().map(v => v.toFixed(2))}, vec2=${vec2Normalized.toArray().map(v => v.toFixed(2))}, angle=${mcpAngle.toFixed(2)}`)
+
+  // PIP CALCULATION using same plane
+  // Project (DIP - PIP) onto the plane
+  const pipToDip = new THREE.Vector3(
+    dip.x - pip.x,
+    dip.y - pip.y,
+    dip.z - pip.z
+  )
+  const pipToDipDot = pipToDip.dot(planeNormal)
+  const projectedPipToDip = pipToDip.clone().sub(planeNormal.clone().multiplyScalar(pipToDipDot))
+  projectedPipToDip.normalize()
+
+  // Project (PIP - MCP) onto the plane
+  const mcpToPip = new THREE.Vector3(
+    pip.x - mcp.x,
+    pip.y - mcp.y,
+    pip.z - mcp.z
+  )
+  const mcpToPipDot = mcpToPip.dot(planeNormal)
+  const projectedMcpToPip = mcpToPip.clone().sub(planeNormal.clone().multiplyScalar(mcpToPipDot))
+  projectedMcpToPip.normalize()
+
+  // Calculate angle between projected vectors
+  const pipAngle = projectedPipToDip.angleTo(projectedMcpToPip)
+
+  // DIP CALCULATION using same plane
+  // Project (TIP - DIP) onto the plane
+  const dipToTip = new THREE.Vector3(
+    tip.x - dip.x,
+    tip.y - dip.y,
+    tip.z - dip.z
+  )
+  const dipToTipDot = dipToTip.dot(planeNormal)
+  const projectedDipToTip = dipToTip.clone().sub(planeNormal.clone().multiplyScalar(dipToTipDot))
+  projectedDipToTip.normalize()
+
+  // Project (DIP - PIP) onto the plane
+  const pipToDipForDip = new THREE.Vector3(
+    dip.x - pip.x,
+    dip.y - pip.y,
+    dip.z - pip.z
+  )
+  const pipToDipForDipDot = pipToDipForDip.dot(planeNormal)
+  const projectedPipToDipForDip = pipToDipForDip.clone().sub(planeNormal.clone().multiplyScalar(pipToDipForDipDot))
+  projectedPipToDipForDip.normalize()
+
+  // Calculate angle between projected vectors
+  const dipAngle = projectedDipToTip.angleTo(projectedPipToDipForDip)
+
+  return {
+    mcp: mcpAngle,
+    pip: pipAngle,
+    dip: dipAngle
+  }
+}
+
+/**
  * Calculate wrist orientation from hand landmarks
  * Uses palm plane to determine hand rotation in 3D space
  * @param {Array} landmarks - MediaPipe hand landmarks (21 points)
@@ -437,108 +565,36 @@ export function landmarksToJointRotations(landmarks, handedness = 'Right') {
   
 
   // INDEX FINGER
-  const indexMcpCurl = calculateFingerCurl(
-    landmarks,
-    LANDMARKS.WRIST,
-    LANDMARKS.INDEX_MCP,
-    LANDMARKS.INDEX_PIP
-  )
-  const indexPipCurl = calculateFingerCurl(
-    landmarks,
-    LANDMARKS.INDEX_MCP,
-    LANDMARKS.INDEX_PIP,
-    LANDMARKS.INDEX_DIP
-  )
-  const indexDipCurl = calculateFingerCurl(
-    landmarks,
-    LANDMARKS.INDEX_PIP,
-    LANDMARKS.INDEX_DIP,
-    LANDMARKS.INDEX_TIP
-  )
-
-  joints.index_mcp = indexMcpCurl
-  joints.index_pip = indexPipCurl
-  joints.index_dip = indexDipCurl
-  joints.index_tip = indexDipCurl * 0.7
-  joints.index_roll = 0.21-calculateFingerMcpRoll(landmarks, LANDMARKS.INDEX_MCP, LANDMARKS.INDEX_TIP)
+  const { mcp, pip, dip } = calculateFingerJointAngles(landmarks, LANDMARKS.INDEX_MCP)
+  joints.index_mcp = mcp
+  joints.index_pip = pip
+  joints.index_dip = dip
+  joints.index_tip = dip * 0.7
+  joints.index_roll = 0.11 - calculateFingerMcpRoll(landmarks, LANDMARKS.INDEX_MCP, LANDMARKS.INDEX_TIP)
 
 
   // MIDDLE FINGER
-  const middleMcpCurl = calculateFingerCurl(
-    landmarks,
-    LANDMARKS.WRIST,
-    LANDMARKS.MIDDLE_MCP,
-    LANDMARKS.MIDDLE_PIP
-  )
-  const middlePipCurl = calculateFingerCurl(
-    landmarks,
-    LANDMARKS.MIDDLE_MCP,
-    LANDMARKS.MIDDLE_PIP,
-    LANDMARKS.MIDDLE_DIP
-  )
-  const middleDipCurl = calculateFingerCurl(
-    landmarks,
-    LANDMARKS.MIDDLE_PIP,
-    LANDMARKS.MIDDLE_DIP,
-    LANDMARKS.MIDDLE_TIP
-  )
-
-  joints.middle_mcp = middleMcpCurl
-  joints.middle_pip = middlePipCurl
-  joints.middle_dip = middleDipCurl
-  joints.middle_tip = middleDipCurl * 0.7
+  const { mcp: middleMcp, pip: middlePip, dip: middleDip } = calculateFingerJointAngles(landmarks, LANDMARKS.MIDDLE_MCP)
+  joints.middle_mcp = middleMcp
+  joints.middle_pip = middlePip
+  joints.middle_dip = middleDip
+  joints.middle_tip = middleDip * 0.7
   joints.middle_roll = calculateFingerMcpRoll(landmarks, LANDMARKS.MIDDLE_MCP, LANDMARKS.MIDDLE_TIP)
 
   // RING FINGER
-  const ringMcpCurl = calculateFingerCurl(
-    landmarks,
-    LANDMARKS.WRIST,
-    LANDMARKS.RING_MCP,
-    LANDMARKS.RING_PIP
-  )
-  const ringPipCurl = calculateFingerCurl(
-    landmarks,
-    LANDMARKS.RING_MCP,
-    LANDMARKS.RING_PIP,
-    LANDMARKS.RING_DIP
-  )
-  const ringDipCurl = calculateFingerCurl(
-    landmarks,
-    LANDMARKS.RING_PIP,
-    LANDMARKS.RING_DIP,
-    LANDMARKS.RING_TIP
-  )
-
-  joints.ring_mcp = ringMcpCurl
-  joints.ring_pip = ringPipCurl
-  joints.ring_dip = ringDipCurl
-  joints.ring_tip = ringDipCurl * 0.7
+  const { mcp: ringMcp, pip: ringPip, dip: ringDip } = calculateFingerJointAngles(landmarks, LANDMARKS.RING_MCP)
+  joints.ring_mcp = ringMcp
+  joints.ring_pip = ringPip
+  joints.ring_dip = ringDip
+  joints.ring_tip = ringDip * 0.7
   joints.ring_roll = calculateFingerMcpRoll(landmarks, LANDMARKS.RING_MCP, LANDMARKS.RING_TIP)
 
   // PINKY FINGER
-  const pinkyMcpCurl = calculateFingerCurl(
-    landmarks,
-    LANDMARKS.WRIST,
-    LANDMARKS.PINKY_MCP,
-    LANDMARKS.PINKY_PIP
-  )
-  const pinkyPipCurl = calculateFingerCurl(
-    landmarks,
-    LANDMARKS.PINKY_MCP,
-    LANDMARKS.PINKY_PIP,
-    LANDMARKS.PINKY_DIP
-  )
-  const pinkyDipCurl = calculateFingerCurl(
-    landmarks,
-    LANDMARKS.PINKY_PIP,
-    LANDMARKS.PINKY_DIP,
-    LANDMARKS.PINKY_TIP
-  )
-
-  joints.pinky_mcp = pinkyMcpCurl
-  joints.pinky_pip = pinkyPipCurl
-  joints.pinky_dip = pinkyDipCurl
-  joints.pinky_tip = pinkyDipCurl * 0.7
+  const { mcp: pinkyMcp, pip: pinkyPip, dip: pinkyDip } = calculateFingerJointAngles(landmarks, LANDMARKS.PINKY_MCP)
+  joints.pinky_mcp = pinkyMcp
+  joints.pinky_pip = pinkyPip
+  joints.pinky_dip = pinkyDip
+  joints.pinky_tip = pinkyDip * 0.7
   joints.pinky_roll = calculateFingerMcpRoll(landmarks, LANDMARKS.PINKY_MCP, LANDMARKS.PINKY_TIP)
 
   // WRIST - legacy single-axis rotation (kept for compatibility)
