@@ -8,6 +8,7 @@ import { getURDFPath } from '../utils/urdfConfig'
 import { mapUIJointToURDF, clampJointValue } from '../utils/urdfJointMapping'
 import { parseJointConfig, createSemanticMapping } from '../utils/urdfParser'
 import JointGimbalVisualizer from './JointGimbalVisualizer'
+import ThumbBoneVisualizer from './ThumbBoneVisualizer'
 
 /**
  * URDFHandModel Component
@@ -22,7 +23,9 @@ export default function URDFHandModel({
   onRobotLoaded = null,
   useMultiDoF = false,
   showJointGimbals = false,
-  onPalmLengthCalculated = null
+  onPalmLengthCalculated = null,
+  showThumbBones = false,
+  thumbBonesRotation = [0, 0, 0]
 }) {
   const [robot, setRobot] = useState(null)
   const [error, setError] = useState(null)
@@ -320,6 +323,14 @@ export default function URDFHandModel({
       <group ref={groupRef} position={position}>
         <primitive object={robot} />
         <JointGimbalVisualizer robot={robot} visible={showJointGimbals} scale={0.05} />
+        {showThumbBones && (
+          <ThumbBoneVisualizer
+            robot={robot}
+            visible={true}
+            scale={1}
+            rotation={thumbBonesRotation}
+          />
+        )}
       </group>
     )
   }

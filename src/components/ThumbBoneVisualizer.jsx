@@ -14,12 +14,12 @@ import * as THREE from 'three'
 /**
  * Visualizes a single joint with position sphere and rotation axis cylinder
  */
-function JointAxisHelper({ joint, jointName, color }) {
+function JointAxisHelper({ joint, jointName, color, parentGroup }) {
   const cylinderRef = useRef()
   const sphereRef = useRef()
 
   useFrame(() => {
-    if (!joint || !cylinderRef.current || !sphereRef.current) return
+    if (!joint || !cylinderRef.current || !sphereRef.current || !parentGroup) return
 
     // Update joint's world matrix
     joint.updateWorldMatrix(true, false)
@@ -27,6 +27,9 @@ function JointAxisHelper({ joint, jointName, color }) {
     // Get joint position in world space
     const worldPos = new THREE.Vector3()
     joint.getWorldPosition(worldPos)
+
+    // Convert world position to local space relative to parent group
+    parentGroup.worldToLocal(worldPos)
     sphereRef.current.position.copy(worldPos)
 
     // Get joint axis (default to [0, 0, 1] if not specified)
@@ -43,13 +46,19 @@ function JointAxisHelper({ joint, jointName, color }) {
     const worldAxis = localAxis.applyQuaternion(worldQuat)
     worldAxis.normalize()
 
-    // Position cylinder at joint position
+    // Convert world axis direction to local space
+    const parentWorldQuat = new THREE.Quaternion()
+    parentGroup.getWorldQuaternion(parentWorldQuat)
+    const parentWorldQuatInv = parentWorldQuat.clone().invert()
+    const localAxisDirection = worldAxis.clone().applyQuaternion(parentWorldQuatInv)
+
+    // Position cylinder at joint position (in local space)
     cylinderRef.current.position.copy(worldPos)
 
-    // Orient cylinder to point along axis
+    // Orient cylinder to point along axis (in local space)
     // Cylinder geometry is along Y axis by default
     const up = new THREE.Vector3(0, 1, 0)
-    const quaternion = new THREE.Quaternion().setFromUnitVectors(up, worldAxis)
+    const quaternion = new THREE.Quaternion().setFromUnitVectors(up, localAxisDirection)
     cylinderRef.current.setRotationFromQuaternion(quaternion)
   })
 
@@ -81,6 +90,7 @@ export default function ThumbBoneVisualizer({
   rotation = [0, 0, 0]
 }) {
   const thumbJointsRef = useRef([])
+  const groupRef = useRef()
 
   // Find thumb joints when robot loads
   useEffect(() => {
@@ -118,13 +128,14 @@ export default function ThumbBoneVisualizer({
   }
 
   return (
-    <group rotation={rotation} scale={scale}>
+    <group ref={groupRef} rotation={rotation} scale={scale}>
       {thumbJointsRef.current.map(({ name, joint }) => (
         <JointAxisHelper
           key={name}
           joint={joint}
           jointName={name}
           color={getJointColor(name)}
+          parentGroup={groupRef.current}
         />
       ))}
     </group>

@@ -4,7 +4,6 @@ import AbilityHand from '../models/AbilityHand'
 import InspireHand from '../models/InspireHand'
 import URDFHandModel from './URDFHandModel'
 import ThumbTargetCursor from './ThumbTargetCursor'
-import ThumbBoneVisualizer from './ThumbBoneVisualizer'
 import { hasURDFSupport } from '../utils/urdfConfig'
 
 function HandModelInner({
@@ -47,6 +46,8 @@ function HandModelInner({
               useMultiDoF={useMultiDoF}
               showJointGimbals={showJointGimbals}
               onPalmLengthCalculated={onPalmLengthCalculated}
+              showThumbBones={showThumbBones}
+              thumbBonesRotation={thumbBonesRotation}
             />
           )
         }
@@ -86,6 +87,8 @@ function HandModelInner({
               useMultiDoF={useMultiDoF}
               showJointGimbals={showJointGimbals}
               onPalmLengthCalculated={onPalmLengthCalculated}
+              showThumbBones={showThumbBones}
+              thumbBonesRotation={thumbBonesRotation}
             />
           )
         }
@@ -118,15 +121,6 @@ function HandModelInner({
   return (
     <group position={position} rotation={[0, 0, zRotationOffset]}>
       {renderModel()}
-      {/* Thumb Bone Visualizer */}
-      {showThumbBones && robot && (
-        <ThumbBoneVisualizer
-          robot={robot}
-          visible={true}
-          scale={1}
-          rotation={thumbBonesRotation}
-        />
-      )}
     </group>
   )
 }

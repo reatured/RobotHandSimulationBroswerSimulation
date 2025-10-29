@@ -129,7 +129,7 @@ export default function Scene3D({
   show3DCursor = false,
   onManualLandmarkDrag = null,
   cameraLandmarks = { left: null, right: null },
-  showThumbBones = false,
+  showThumbBones = true,
   leftModelShortName = '',
   rightModelShortName = ''
 }) {
