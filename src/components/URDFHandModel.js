@@ -25,7 +25,8 @@ export default function URDFHandModel({
   showJointGimbals = false,
   onPalmLengthCalculated = null,
   showThumbBones = false,
-  thumbBonesRotation = [0, 0, 0]
+  thumbBonesRotation = [0, 0, 0],
+  enableThumbFK = true
 }) {
   const [robot, setRobot] = useState(null)
   const [error, setError] = useState(null)
@@ -234,6 +235,12 @@ export default function URDFHandModel({
     // Apply each joint rotation
     if (Object.keys(joints).length > 0) {
       Object.entries(joints).forEach(([uiJointName, angleData]) => {
+        // Skip thumb joints when thumb FK is disabled
+        const isThumbJoint = uiJointName.startsWith('thumb_')
+        if (isThumbJoint && !enableThumbFK) {
+          return // Skip FK application - thumb stays at rest position
+        }
+
         // Check if this is multi-DoF data (object with pitch/yaw/roll)
         const isMultiDoF = typeof angleData === 'object' &&
                            (angleData.pitch !== undefined ||

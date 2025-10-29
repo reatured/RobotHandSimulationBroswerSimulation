@@ -131,7 +131,8 @@ export default function Scene3D({
   cameraLandmarks = { left: null, right: null },
   showThumbBones = true,
   leftModelShortName = '',
-  rightModelShortName = ''
+  rightModelShortName = '',
+  enableThumbFK = true
 }) {
   // Ref for OrbitControls to pass to gimbals
   const orbitControlsRef = useRef()
@@ -265,6 +266,7 @@ export default function Scene3D({
               show3DCursor={show3DCursor}
               showThumbBones={showThumbBones}
               thumbBonesRotation={[Math.PI /2, -Math.PI /2, 0]}
+              enableThumbFK={enableThumbFK}
             />
           </GimbalControl>
 
@@ -320,6 +322,7 @@ export default function Scene3D({
               show3DCursor={show3DCursor}
               showThumbBones={showThumbBones}
               thumbBonesRotation={[0, 0, 0]}
+              enableThumbFK={enableThumbFK}
             />
           </GimbalControl>
 

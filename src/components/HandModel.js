@@ -19,7 +19,8 @@ function HandModelInner({
   cameraLandmarks = null,
   onPalmLengthCalculated = null,
   showThumbBones = false,
-  thumbBonesRotation = [0, 0, 0]
+  thumbBonesRotation = [0, 0, 0],
+  enableThumbFK = true
 }) {
   // State to store loaded robot
   const [robot, setRobot] = useState(null)
@@ -48,6 +49,7 @@ function HandModelInner({
               onPalmLengthCalculated={onPalmLengthCalculated}
               showThumbBones={showThumbBones}
               thumbBonesRotation={thumbBonesRotation}
+              enableThumbFK={enableThumbFK}
             />
           )
         }
@@ -89,6 +91,7 @@ function HandModelInner({
               onPalmLengthCalculated={onPalmLengthCalculated}
               showThumbBones={showThumbBones}
               thumbBonesRotation={thumbBonesRotation}
+              enableThumbFK={enableThumbFK}
             />
           )
         }

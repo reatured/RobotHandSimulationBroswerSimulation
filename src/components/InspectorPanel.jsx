@@ -130,7 +130,9 @@ const InspectorPanel = ({
   onResetHandPose,
   sceneGraph,
   selectedObject,
-  onSelectObject
+  onSelectObject,
+  enableThumbFK,
+  onEnableThumbFKChange
 }) => {
   // Collapsible section states (all open by default)
   const [controlsOpen, setControlsOpen] = useState(true)
@@ -722,6 +724,19 @@ const InspectorPanel = ({
               )}
             >
               3D Cursor
+            </button>
+
+            {/* Thumb FK */}
+            <button
+              onClick={() => onEnableThumbFKChange(!enableThumbFK)}
+              className={cn(
+                "px-2 py-1.5 rounded text-[10px] font-medium transition-all",
+                enableThumbFK
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-secondary/20 text-muted-foreground hover:bg-secondary/40"
+              )}
+            >
+              Thumb FK
             </button>
 
             {/* Multi-DoF - HIDDEN FOR DEMO */}

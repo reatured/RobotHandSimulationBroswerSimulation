@@ -244,6 +244,9 @@ export default function App() {
   // Thumb 3DOF addon toggle (default: disabled, only works with quaternion tracking)
   const [useThumb3DoF, setUseThumb3DoF] = useState(false)
 
+  // Thumb FK enable/disable toggle (default: enabled)
+  const [enableThumbFK, setEnableThumbFK] = useState(true)
+
   // Hierarchy panel state - for editor tools
   const [sceneGraph, setSceneGraph] = useState([])
   const [selectedObject, setSelectedObject] = useState(null)
@@ -550,6 +553,7 @@ export default function App() {
         cameraLandmarks={cameraLandmarks}
         leftModelShortName={currentLeftModel?.shortName || ''}
         rightModelShortName={currentRightModel?.shortName || ''}
+        enableThumbFK={enableThumbFK}
       />
 
       <HandTrackingCamera
@@ -632,6 +636,8 @@ export default function App() {
           sceneGraph={sceneGraph}
           selectedObject={selectedObject}
           onSelectObject={handleSelectObject}
+          enableThumbFK={enableThumbFK}
+          onEnableThumbFKChange={setEnableThumbFK}
         />
       )}
 
