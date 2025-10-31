@@ -7,6 +7,8 @@ import { CalibrationManager } from './utils/coordinateMapping'
 import { getShortestRotation } from './utils/handKinematics'
 import { applyMetalMaterial } from './components/URDFHandModel'
 import { IKController } from './ik'
+import { gloveClient } from './utils/gloveClient'
+import { convertGloveDataToJoints } from './utils/gloveMapping'
 
 // Detect if user is on mobile device
 const isMobileDevice = () => {
@@ -261,6 +263,36 @@ export default function App() {
   // Update calibration status on mount
   useEffect(() => {
     setCalibrationStatus(calibrationManagerRef.current.getStatus())
+  }, [])
+
+  // TEST: Connect to glove backend on mount
+  useEffect(() => {
+    console.log('🧤 [App] Initializing glove connection test...')
+
+    const backendUrl = process.env.REACT_APP_GLOVE_BACKEND_URL || 'http://localhost:5000'
+
+    // Handle incoming glove data
+    const handleGloveData = (rawData) => {
+      console.log('📦 [App] Raw glove data received:', rawData)
+
+      // Convert to joint rotations
+      const convertedJoints = convertGloveDataToJoints(rawData)
+      console.log('🔄 [App] Converted to joints:', convertedJoints)
+    }
+
+    // Handle connection status changes
+    const handleGloveStatus = (status) => {
+      console.log('🔌 [App] Glove connection status:', status)
+    }
+
+    // Connect to backend
+    gloveClient.connect(backendUrl, handleGloveData, handleGloveStatus)
+
+    // Cleanup on unmount
+    return () => {
+      console.log('🧤 [App] Cleaning up glove connection...')
+      gloveClient.disconnect()
+    }
   }, [])
 
   const currentLeftModel = useMemo(() =>
