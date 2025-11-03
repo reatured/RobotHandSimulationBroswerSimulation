@@ -7,10 +7,15 @@ import { landmarksToJointRotations } from '../utils/handKinematics'
  */
 export default function DebugPanel({
   onReset,
-  handTrackingData // Raw landmark position data from MediaPipe
+  handTrackingData, // Raw landmark position data from MediaPipe
+  gloveJointRotations, // Joint rotations from glove backend
+  gloveConnectionStatus // Connection status: 'connected' | 'disconnected' | 'error'
 }) {
   // State for selected hand
   const [selectedHand, setSelectedHand] = useState('left')
+
+  // State for data source (camera or glove)
+  const [dataSource, setDataSource] = useState('camera')
 
   // State to persist last valid joint angles
   const [lastValidJoints, setLastValidJoints] = useState(null)
@@ -18,8 +23,14 @@ export default function DebugPanel({
   // Convert radians to degrees and format (1 decimal place)
   const formatDeg = (radians) => ((radians || 0) * 180 / Math.PI).toFixed(1)
 
-  // Convert position data to joint rotations using handKinematics
+  // Convert position data to joint rotations using handKinematics (for camera data)
   const convertedJoints = (() => {
+    if (dataSource === 'glove') {
+      // Use glove data
+      return gloveJointRotations?.[selectedHand] || null
+    }
+
+    // Use camera data
     if (!handTrackingData || !handTrackingData.multiHandLandmarks) {
       return null
     }
@@ -76,6 +87,57 @@ export default function DebugPanel({
       maxHeight: '90vh',
       overflowY: 'auto'
     }}>
+      {/* Data Source Toggle (Camera vs Glove) */}
+      <div style={{
+        display: 'flex',
+        gap: '4px',
+        marginBottom: '6px',
+        alignItems: 'center'
+      }}>
+        <button
+          onClick={() => setDataSource('camera')}
+          style={{
+            flex: 1,
+            padding: '4px 8px',
+            fontSize: '10px',
+            backgroundColor: dataSource === 'camera'
+              ? 'rgba(34, 197, 94, 0.9)'
+              : 'rgba(255, 255, 255, 0.15)',
+            color: 'white',
+            border: dataSource === 'camera'
+              ? '2px solid rgba(34, 197, 94, 1)'
+              : '1px solid rgba(255, 255, 255, 0.3)',
+            borderRadius: '3px',
+            cursor: 'pointer',
+            fontWeight: dataSource === 'camera' ? 'bold' : 'normal',
+            fontFamily: 'monospace'
+          }}
+        >
+          📹 CAMERA
+        </button>
+        <button
+          onClick={() => setDataSource('glove')}
+          style={{
+            flex: 1,
+            padding: '4px 8px',
+            fontSize: '10px',
+            backgroundColor: dataSource === 'glove'
+              ? 'rgba(168, 85, 247, 0.9)'
+              : 'rgba(255, 255, 255, 0.15)',
+            color: 'white',
+            border: dataSource === 'glove'
+              ? '2px solid rgba(168, 85, 247, 1)'
+              : '1px solid rgba(255, 255, 255, 0.3)',
+            borderRadius: '3px',
+            cursor: 'pointer',
+            fontWeight: dataSource === 'glove' ? 'bold' : 'normal',
+            fontFamily: 'monospace'
+          }}
+        >
+          🧤 GLOVE {gloveConnectionStatus === 'connected' ? '🟢' : '🔴'}
+        </button>
+      </div>
+
       {/* Hand Selection Toggle */}
       <div style={{
         display: 'flex',

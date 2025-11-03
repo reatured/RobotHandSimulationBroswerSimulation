@@ -372,7 +372,6 @@ function calculateFingerJointAngles(landmarks, mcpIdx) {
   // Step 5: angle between vec3 and vec2
   const vec2Normalized = vec2.clone().normalize()
   const mcpAngle = vec3.angleTo(vec2Normalized)
-  console.log(`MCP Angle Calculation: vec3=${vec3.toArray().map(v => v.toFixed(2))}, vec2=${vec2Normalized.toArray().map(v => v.toFixed(2))}, angle=${mcpAngle.toFixed(2)}`)
 
   // PIP CALCULATION using same plane
   // Project (DIP - PIP) onto the plane

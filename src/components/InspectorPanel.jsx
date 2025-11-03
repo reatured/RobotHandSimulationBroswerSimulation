@@ -132,7 +132,8 @@ const InspectorPanel = ({
   selectedObject,
   onSelectObject,
   enableThumbFK,
-  onEnableThumbFKChange
+  onEnableThumbFKChange,
+  gloveConnectionStatus
 }) => {
   // Collapsible section states (all open by default)
   const [controlsOpen, setControlsOpen] = useState(true)
@@ -157,6 +158,7 @@ const InspectorPanel = ({
   const isManualMode = controlMode === 'manual'
   const isCameraMode = controlMode === 'camera'
   const isIKMode = controlMode === 'ik'
+  const isGloveMode = controlMode === 'glove'
 
   const fingers = [
     { name: 'thumb', label: 'Thumb' },
@@ -201,7 +203,7 @@ const InspectorPanel = ({
                     <label className="text-xs font-medium text-panel-foreground block mb-1">
                       Control Mode
                     </label>
-                    <div className="grid grid-cols-3 gap-1.5">
+                    <div className="grid grid-cols-4 gap-1.5">
                       <Button
                         variant={isManualMode ? "default" : "outline"}
                         size="sm"
@@ -225,6 +227,14 @@ const InspectorPanel = ({
                         className="text-xs uppercase"
                       >
                         IK
+                      </Button>
+                      <Button
+                        variant={isGloveMode ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => onControlModeChange('glove')}
+                        className="text-xs uppercase"
+                      >
+                        Glove {gloveConnectionStatus === 'connected' ? '🟢' : '🔴'}
                       </Button>
                     </div>
                   </div>
