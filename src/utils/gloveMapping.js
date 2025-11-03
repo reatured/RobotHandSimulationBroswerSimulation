@@ -98,9 +98,11 @@ export function convertGloveDataToJoints(gloveData) {
       }
       // Thumb MCP (index 1): thumb_mcp pitch and thumb_roll from LeftThumb2
       else if (index === 1) {
-        jointRotations.left.thumb_mcp = -joint.x/1.3* (Math.PI / 180)    // pitch (flexion)
-        jointRotations.left.thumb_roll = -joint.x / 1.3 * (Math.PI / 180)   // roll from x - NEGATED
+
+        jointRotations.left.thumb_roll = -joint.x / 2 * (Math.PI / 180)   // roll from x - NEGATED
+        jointRotations.left.thumb_mcp = -joint.x/1.6* (Math.PI / 180)    // pitch (flexion)
       }
+     
       // Finger MCPs (indices 3, 6, 9, 12): 2-axis joints with pitch and roll
       else if ([3, 6, 9, 12].includes(index)) {
         const finger = jointName.split('_')[0] // extract 'index', 'middle', 'ring', 'pinky'
@@ -129,14 +131,14 @@ export function convertGloveDataToJoints(gloveData) {
 
       // Thumb CMC (index 0 in array, globalIndex 15): thumb_cmc pitch and thumb_yaw from RightThumb1
       if (index === 0) {
-        jointRotations.right.thumb_cmc = -joint.x * (Math.PI / 180)    // pitch (flexion)
-        jointRotations.right.thumb_yaw = joint.z * (Math.PI / 180)     // yaw from z - NO NEGATION, NO OFFSET
+        jointRotations.right.thumb_cmc = -joint.x/2 * (Math.PI / 180)    // pitch (flexion) with /2 scaling
+        jointRotations.right.thumb_yaw = joint.z * 1.5 * (Math.PI / 180)     // yaw from z with *1.5 scaling
         // thumb_roll comes from RightThumb2 (index 1)
       }
       // Thumb MCP (index 1 in array, globalIndex 16): thumb_mcp pitch and thumb_roll from RightThumb2
       else if (index === 1) {
-        jointRotations.right.thumb_mcp = -joint.x * (Math.PI / 180)    // pitch (flexion)
-        jointRotations.right.thumb_roll = -joint.x * (Math.PI / 180)   // roll from x - NEGATED
+        jointRotations.right.thumb_mcp = -joint.x/1.3 * (Math.PI / 180)    // pitch (flexion) with /1.3 scaling
+        jointRotations.right.thumb_roll = -joint.x/1.3 * (Math.PI / 180)   // roll from x with /1.3 scaling
       }
       // Finger MCPs (indices 3, 6, 9, 12 in array): 2-axis joints with pitch and roll
       else if ([3, 6, 9, 12].includes(index)) {
