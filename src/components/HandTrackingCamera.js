@@ -385,10 +385,10 @@ export default function HandTrackingCamera({ onHandResults, onJointRotations, on
     <div
       onClick={handlePreviewClick}
       style={{
-        position: 'absolute',
-        top: 20,
-        left: isMobile ? '50%' : 20,
-        transform: isMobile ? 'translateX(-50%)' : 'none',
+        position: isMobile ? 'relative' : 'absolute',
+        top: isMobile ? 0 : 20,
+        left: isMobile ? 'auto' : 20,
+        margin: isMobile ? '20px auto 20px auto' : 0,
         width: '320px',
         height: '240px',
         border: '2px solid white',

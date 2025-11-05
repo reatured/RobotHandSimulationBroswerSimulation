@@ -515,8 +515,39 @@ export default function App() {
   }, [persistedLandmarks, manualLandmarkOverrides])
 
   return (
-    <div style={{ position: 'relative', width: '100vw', height: '100vh' }}>
-      <Scene3D
+    <div style={{
+      display: 'flex',
+      flexDirection: isMobile ? 'column' : 'row',
+      alignItems: isMobile ? 'center' : 'flex-start',
+      width: '100vw',
+      height: '100vh',
+      overflow: isMobile ? 'auto' : 'hidden',
+      position: 'relative'
+    }}>
+      {/* Camera on top for mobile */}
+      {isMobile && (
+        <HandTrackingCamera
+          onHandResults={handleHandResults}
+          onJointRotations={handleCameraJointRotations}
+          onHandPositions={handleCameraHandPositions}
+          onRawLandmarks={handleCameraLandmarks}
+          calibrationManager={calibrationManagerRef.current}
+          showPreview={showCameraPreview}
+          useQuaternionTracking={useQuaternionTracking}
+          useThumb3DoF={useThumb3DoF}
+          robotRefs={{ left: leftRobotRef, right: rightRobotRef }}
+        />
+      )}
+
+      {/* 3D Canvas container */}
+      <div style={{
+        width: isMobile ? '100vw' : '100%',
+        height: isMobile ? '100vw' : '100%',
+        maxHeight: isMobile ? '100vw' : '100vh',
+        flex: isMobile ? 'none' : 1,
+        position: 'relative'
+      }}>
+        <Scene3D
         leftModel={currentLeftModel}
         rightModel={currentRightModel}
         handTrackingData={handTrackingData}
@@ -553,17 +584,21 @@ export default function App() {
         rightModelShortName={currentRightModel?.shortName || ''}
       />
 
-      <HandTrackingCamera
-        onHandResults={handleHandResults}
-        onJointRotations={handleCameraJointRotations}
-        onHandPositions={handleCameraHandPositions}
-        onRawLandmarks={handleCameraLandmarks}
-        calibrationManager={calibrationManagerRef.current}
-        showPreview={showCameraPreview}
-        useQuaternionTracking={useQuaternionTracking}
-        useThumb3DoF={useThumb3DoF}
-        robotRefs={{ left: leftRobotRef, right: rightRobotRef }}
-      />
+        {/* Camera overlay for desktop */}
+        {!isMobile && (
+          <HandTrackingCamera
+            onHandResults={handleHandResults}
+            onJointRotations={handleCameraJointRotations}
+            onHandPositions={handleCameraHandPositions}
+            onRawLandmarks={handleCameraLandmarks}
+            calibrationManager={calibrationManagerRef.current}
+            showPreview={showCameraPreview}
+            useQuaternionTracking={useQuaternionTracking}
+            useThumb3DoF={useThumb3DoF}
+            robotRefs={{ left: leftRobotRef, right: rightRobotRef }}
+          />
+        )}
+      </div>
 
       {/* IK Controller - processes camera data through IK solver when in IK mode */}
       {controlMode === 'ik' && (
