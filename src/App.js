@@ -578,7 +578,7 @@ export default function App() {
         />
       )}
 
-      {showControlPanel && (
+      {process.env.REACT_APP_ENABLE_INSPECTOR !== 'false' && showControlPanel && (
         <InspectorPanel
           jointRotations={finalJointRotations}
           cameraJointRotations={cameraJointRotations}
@@ -663,7 +663,7 @@ export default function App() {
       )}
 
       {/* Debug Panel - shows 3-axis rotation data from position conversion (disabled on mobile) */}
-      {showDebugPanel && !isMobile && (
+      {process.env.REACT_APP_ENABLE_DEBUG !== 'false' && showDebugPanel && !isMobile && (
         <DebugPanel
           handTrackingData={handTrackingData}
           onReset={handleResetGimbals}
@@ -671,86 +671,90 @@ export default function App() {
       )}
 
       {/* Debug Panel Toggle Button - Always visible */}
-      <button
-        onClick={() => setShowDebugPanel(!showDebugPanel)}
-        style={{
-          position: 'absolute',
-          bottom: '10px',
-          left: '10px',
-          padding: '8px 12px',
-          fontSize: '11px',
-          backgroundColor: showDebugPanel ? 'rgba(255, 100, 100, 0.9)' : 'rgba(100, 150, 255, 0.9)',
-          color: 'white',
-          border: showDebugPanel ? '1px solid rgba(255, 150, 150, 0.5)' : '1px solid rgba(150, 200, 255, 0.5)',
-          borderRadius: '4px',
-          cursor: 'pointer',
-          fontWeight: '600',
-          fontFamily: 'monospace',
-          zIndex: 20,
-          transition: 'all 0.2s'
-        }}
-        onMouseOver={(e) => {
-          if (showDebugPanel) {
-            e.currentTarget.style.backgroundColor = 'rgba(255, 100, 100, 1)'
-            e.currentTarget.style.borderColor = 'rgba(255, 150, 150, 0.8)'
-          } else {
-            e.currentTarget.style.backgroundColor = 'rgba(100, 150, 255, 1)'
-            e.currentTarget.style.borderColor = 'rgba(150, 200, 255, 0.8)'
-          }
-        }}
-        onMouseOut={(e) => {
-          if (showDebugPanel) {
-            e.currentTarget.style.backgroundColor = 'rgba(255, 100, 100, 0.9)'
-            e.currentTarget.style.borderColor = 'rgba(255, 150, 150, 0.5)'
-          } else {
-            e.currentTarget.style.backgroundColor = 'rgba(100, 150, 255, 0.9)'
-            e.currentTarget.style.borderColor = 'rgba(150, 200, 255, 0.5)'
-          }
-        }}
-      >
-        {showDebugPanel ? 'Hide Debug' : 'Show Debug'}
-      </button>
+      {process.env.REACT_APP_ENABLE_DEBUG !== 'false' && (
+        <button
+          onClick={() => setShowDebugPanel(!showDebugPanel)}
+          style={{
+            position: 'absolute',
+            bottom: '10px',
+            left: '10px',
+            padding: '8px 12px',
+            fontSize: '11px',
+            backgroundColor: showDebugPanel ? 'rgba(255, 100, 100, 0.9)' : 'rgba(100, 150, 255, 0.9)',
+            color: 'white',
+            border: showDebugPanel ? '1px solid rgba(255, 150, 150, 0.5)' : '1px solid rgba(150, 200, 255, 0.5)',
+            borderRadius: '4px',
+            cursor: 'pointer',
+            fontWeight: '600',
+            fontFamily: 'monospace',
+            zIndex: 20,
+            transition: 'all 0.2s'
+          }}
+          onMouseOver={(e) => {
+            if (showDebugPanel) {
+              e.currentTarget.style.backgroundColor = 'rgba(255, 100, 100, 1)'
+              e.currentTarget.style.borderColor = 'rgba(255, 150, 150, 0.8)'
+            } else {
+              e.currentTarget.style.backgroundColor = 'rgba(100, 150, 255, 1)'
+              e.currentTarget.style.borderColor = 'rgba(150, 200, 255, 0.8)'
+            }
+          }}
+          onMouseOut={(e) => {
+            if (showDebugPanel) {
+              e.currentTarget.style.backgroundColor = 'rgba(255, 100, 100, 0.9)'
+              e.currentTarget.style.borderColor = 'rgba(255, 150, 150, 0.5)'
+            } else {
+              e.currentTarget.style.backgroundColor = 'rgba(100, 150, 255, 0.9)'
+              e.currentTarget.style.borderColor = 'rgba(150, 200, 255, 0.5)'
+            }
+          }}
+        >
+          {showDebugPanel ? 'Hide Debug' : 'Show Debug'}
+        </button>
+      )}
 
       {/* Inspector Panel Toggle Button */}
-      <button
-        onClick={() => setShowControlPanel(!showControlPanel)}
-        style={{
-          position: 'absolute',
-          bottom: '10px',
-          left: '120px',
-          padding: '8px 12px',
-          fontSize: '11px',
-          backgroundColor: showControlPanel ? 'rgba(255, 100, 100, 0.9)' : 'rgba(100, 200, 100, 0.9)',
-          color: 'white',
-          border: showControlPanel ? '1px solid rgba(255, 150, 150, 0.5)' : '1px solid rgba(150, 255, 150, 0.5)',
-          borderRadius: '4px',
-          cursor: 'pointer',
-          fontWeight: '600',
-          fontFamily: 'monospace',
-          zIndex: 20,
-          transition: 'all 0.2s'
-        }}
-        onMouseOver={(e) => {
-          if (showControlPanel) {
-            e.currentTarget.style.backgroundColor = 'rgba(255, 100, 100, 1)'
-            e.currentTarget.style.borderColor = 'rgba(255, 150, 150, 0.8)'
-          } else {
-            e.currentTarget.style.backgroundColor = 'rgba(100, 200, 100, 1)'
-            e.currentTarget.style.borderColor = 'rgba(150, 255, 150, 0.8)'
-          }
-        }}
-        onMouseOut={(e) => {
-          if (showControlPanel) {
-            e.currentTarget.style.backgroundColor = 'rgba(255, 100, 100, 0.9)'
-            e.currentTarget.style.borderColor = 'rgba(255, 150, 150, 0.5)'
-          } else {
-            e.currentTarget.style.backgroundColor = 'rgba(100, 200, 100, 0.9)'
-            e.currentTarget.style.borderColor = 'rgba(150, 255, 150, 0.5)'
-          }
-        }}
-      >
-        {showControlPanel ? 'Hide Inspector' : 'Show Inspector'}
-      </button>
+      {process.env.REACT_APP_ENABLE_INSPECTOR !== 'false' && (
+        <button
+          onClick={() => setShowControlPanel(!showControlPanel)}
+          style={{
+            position: 'absolute',
+            bottom: '10px',
+            left: '120px',
+            padding: '8px 12px',
+            fontSize: '11px',
+            backgroundColor: showControlPanel ? 'rgba(255, 100, 100, 0.9)' : 'rgba(100, 200, 100, 0.9)',
+            color: 'white',
+            border: showControlPanel ? '1px solid rgba(255, 150, 150, 0.5)' : '1px solid rgba(150, 255, 150, 0.5)',
+            borderRadius: '4px',
+            cursor: 'pointer',
+            fontWeight: '600',
+            fontFamily: 'monospace',
+            zIndex: 20,
+            transition: 'all 0.2s'
+          }}
+          onMouseOver={(e) => {
+            if (showControlPanel) {
+              e.currentTarget.style.backgroundColor = 'rgba(255, 100, 100, 1)'
+              e.currentTarget.style.borderColor = 'rgba(255, 150, 150, 0.8)'
+            } else {
+              e.currentTarget.style.backgroundColor = 'rgba(100, 200, 100, 1)'
+              e.currentTarget.style.borderColor = 'rgba(150, 255, 150, 0.8)'
+            }
+          }}
+          onMouseOut={(e) => {
+            if (showControlPanel) {
+              e.currentTarget.style.backgroundColor = 'rgba(255, 100, 100, 0.9)'
+              e.currentTarget.style.borderColor = 'rgba(255, 150, 150, 0.5)'
+            } else {
+              e.currentTarget.style.backgroundColor = 'rgba(100, 200, 100, 0.9)'
+              e.currentTarget.style.borderColor = 'rgba(150, 255, 150, 0.5)'
+            }
+          }}
+        >
+          {showControlPanel ? 'Hide Inspector' : 'Show Inspector'}
+        </button>
+      )}
     </div>
   )
 }
