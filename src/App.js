@@ -568,7 +568,7 @@ export default function App() {
         />
       )}
 
-      {showControlPanel && (
+      {process.env.REACT_APP_ENABLE_INSPECTOR !== 'false' && showControlPanel && (
         <InspectorPanel
           jointRotations={finalJointRotations}
           cameraJointRotations={cameraJointRotations}
@@ -651,7 +651,7 @@ export default function App() {
       )}
 
       {/* Debug Panel - shows 3-axis rotation data from position conversion */}
-      {showDebugPanel && (
+      {process.env.REACT_APP_ENABLE_DEBUG !== 'false' && showDebugPanel && (
         <DebugPanel
           handTrackingData={handTrackingData}
           onReset={handleResetGimbals}
@@ -660,7 +660,7 @@ export default function App() {
       )}
 
       {/* Open Debug Panel Button - shows when panel is closed */}
-      {!showDebugPanel && (
+      {process.env.REACT_APP_ENABLE_DEBUG !== 'false' && !showDebugPanel && (
         <button
           onClick={() => setShowDebugPanel(true)}
           style={{
