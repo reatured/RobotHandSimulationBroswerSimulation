@@ -92,7 +92,7 @@ export function convertGloveDataToJoints(gloveData) {
 
       // Thumb CMC (index 0): thumb_cmc pitch and thumb_yaw from LeftThumb1
       if (index === 0) {
-        jointRotations.left.thumb_cmc = -joint.x/2 * (Math.PI / 180)    // pitch (flexion)
+        jointRotations.left.thumb_cmc = joint.x/2 * (Math.PI / 180)    // pitch (flexion)
         jointRotations.left.thumb_yaw = joint.z * 1.5 *(Math.PI / 180)     // yaw from z - NO NEGATION, NO OFFSET
         // thumb_roll comes from LeftThumb2 (index 1)
       }
