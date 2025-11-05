@@ -19,6 +19,9 @@ export default function HandTrackingCamera({ onHandResults, onJointRotations, on
   // State to track horizontal flip
   const [isFlipped, setIsFlipped] = useState(false)
 
+  // State for dynamic container dimensions
+  const [containerDimensions, setContainerDimensions] = useState({ width: '320px', height: '240px' })
+
   // Initialize motion filter (persistent across renders)
   const motionFilterRef = useRef(new MotionFilter({
     alpha: 0.3, // Smoothing strength (lower = smoother but more lag)
@@ -47,6 +50,36 @@ export default function HandTrackingCamera({ onHandResults, onJointRotations, on
   useEffect(() => {
     onRawLandmarksRef.current = onRawLandmarks
   }, [onRawLandmarks])
+
+  // Function to calculate container dimensions based on video aspect ratio
+  const updateContainerDimensions = () => {
+    const video = videoRef.current
+    if (!video || video.videoWidth === 0 || video.videoHeight === 0) return
+
+    const aspectRatio = video.videoWidth / video.videoHeight
+
+    // Use 95vw for width on mobile, calculate height to maintain aspect ratio
+    // Check if device is mobile (viewport width < 768px is common mobile breakpoint)
+    const isMobile = window.innerWidth < 768
+
+    if (isMobile) {
+      // On mobile: width is 95vw minus left offset (20px), max 320px
+      // Height calculated from aspect ratio
+      const widthVw = 95
+      const leftOffset = 20 // pixels
+      const heightVw = widthVw / aspectRatio
+      setContainerDimensions({
+        width: `min(calc(${widthVw}vw - ${leftOffset}px), 400px)`,
+        height: `min(calc(${heightVw}vw - ${leftOffset / aspectRatio}px), ${320 / aspectRatio}px)`
+      })
+    } else {
+      // On desktop: keep fixed dimensions or use smaller responsive size
+      setContainerDimensions({
+        width: '320px',
+        height: `${320 / aspectRatio}px`
+      })
+    }
+  }
 
   useEffect(() => {
     let hands = null
@@ -328,6 +361,8 @@ export default function HandTrackingCamera({ onHandResults, onJointRotations, on
 
           // Wait for video to load before starting hand detection
           videoRef.current.onloadedmetadata = () => {
+            // Update container dimensions based on actual video aspect ratio
+            updateContainerDimensions()
             initializeHandTracking()
             detectHands()
           }
@@ -353,6 +388,30 @@ export default function HandTrackingCamera({ onHandResults, onJointRotations, on
       }
     }
   }, []) // Empty dependency array - only initialize once
+
+  // Handle orientation changes and window resize
+  useEffect(() => {
+    const handleOrientationChange = () => {
+      // Small delay to allow video dimensions to update after rotation
+      setTimeout(() => {
+        updateContainerDimensions()
+      }, 100)
+    }
+
+    const handleResize = () => {
+      updateContainerDimensions()
+    }
+
+    // Add event listeners
+    window.addEventListener('orientationchange', handleOrientationChange)
+    window.addEventListener('resize', handleResize)
+
+    // Cleanup listeners on unmount
+    return () => {
+      window.removeEventListener('orientationchange', handleOrientationChange)
+      window.removeEventListener('resize', handleResize)
+    }
+  }, [])
 
   // Don't render preview if showPreview is false, but keep processing
   if (!showPreview) {
@@ -385,8 +444,8 @@ export default function HandTrackingCamera({ onHandResults, onJointRotations, on
         position: 'absolute',
         top: 20,
         left: 20,
-        width: '320px',
-        height: '240px',
+        width: containerDimensions.width,
+        height: containerDimensions.height,
         border: '2px solid white',
         borderRadius: '8px',
         overflow: 'hidden',
