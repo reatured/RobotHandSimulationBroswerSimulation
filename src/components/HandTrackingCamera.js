@@ -378,13 +378,17 @@ export default function HandTrackingCamera({ onHandResults, onJointRotations, on
     setIsFlipped(prev => !prev)
   }
 
+  // Check if device is mobile for centering
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
+
   return (
     <div
       onClick={handlePreviewClick}
       style={{
         position: 'absolute',
         top: 20,
-        left: 20,
+        left: isMobile ? '50%' : 20,
+        transform: isMobile ? 'translateX(-50%)' : 'none',
         width: '320px',
         height: '240px',
         border: '2px solid white',
@@ -414,6 +418,7 @@ export default function HandTrackingCamera({ onHandResults, onJointRotations, on
           left: 0,
           width: '100%',
           height: '100%',
+          objectFit: 'cover',
           transform: isFlipped ? 'scaleX(1)' : 'scaleX(-1)'
         }}
       />

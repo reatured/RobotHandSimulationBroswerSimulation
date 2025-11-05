@@ -635,32 +635,7 @@ export default function App() {
         />
       )}
 
-      {/* Mobile camera toggle button */}
-      {isMobile && (
-        <div style={{
-          position: 'absolute',
-          top: 10,
-          right: 10,
-          zIndex: 30
-        }}>
-          <button
-            onClick={() => setShowCameraPreview(!showCameraPreview)}
-            style={{
-              padding: '10px 12px',
-              fontSize: '12px',
-              backgroundColor: showCameraPreview ? 'rgba(100, 200, 100, 0.9)' : 'rgba(60, 60, 60, 0.8)',
-              color: 'white',
-              border: '1px solid rgba(255, 255, 255, 0.3)',
-              borderRadius: '6px',
-              cursor: 'pointer',
-              fontWeight: '600',
-              whiteSpace: 'nowrap'
-            }}
-          >
-            {showCameraPreview ? '📹 Hide' : '📹 Show'} Camera
-          </button>
-        </div>
-      )}
+      
 
       {/* Debug Panel - shows 3-axis rotation data from position conversion (disabled on mobile) */}
       {process.env.REACT_APP_DEBUG_MODE !== 'false' && showDebugPanel && !isMobile && (
