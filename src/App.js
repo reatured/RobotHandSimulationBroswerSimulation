@@ -542,6 +542,7 @@ export default function App() {
         onSceneGraphUpdate={handleSceneGraphUpdate}
         selectedObject={selectedObject}
         onSelectObject={handleSelectObject}
+        isMobile={isMobile}
         controlMode={controlMode}
         ikDebugData={ikDebugData}
         showIKVisualization={showIKVisualization}

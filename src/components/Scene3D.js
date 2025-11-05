@@ -131,13 +131,17 @@ export default function Scene3D({
   cameraLandmarks = { left: null, right: null },
   showThumbBones = false,
   leftModelShortName = '',
-  rightModelShortName = ''
+  rightModelShortName = '',
+  isMobile = false
 }) {
   // Ref for OrbitControls to pass to gimbals
   const orbitControlsRef = useRef()
 
   // Camera position - back view (looking from behind, natural perspective)
   const cameraPosition = [0, 0.5, -1]
+
+  // Hand spacing: mobile uses 1 unit apart, desktop uses 0.6 units apart
+  const handSpacing = isMobile ? 0.1 : 0.3
 
   // Ensure we always have valid objects for joint rotations
   const safeLeftRotations = leftJointRotations || {}
@@ -235,7 +239,7 @@ export default function Scene3D({
 
       {/* Left Hand Model with Gimbal Control */}
       {leftModel && (
-        <group position={[0.3, 0, 0]}>
+        <group position={[handSpacing, 0, 0]}>
           {/* Hand mesh group rotation locked to [0, 0, 0] */}
           {/* Local axes at hand mesh group level - does not rotate */}
           {showAxes && <axesHelper args={[0.15]} />}
@@ -293,7 +297,7 @@ export default function Scene3D({
 
       {/* Right Hand Model with Gimbal Control */}
       {rightModel && (
-        <group position={[-0.3, 0, 0]}>
+        <group position={[-handSpacing, 0, 0]}>
           {/* Hand mesh group rotation locked to [0, 0, 0] */}
           {/* Local axes at hand mesh group level - does not rotate */}
           {showAxes && <axesHelper args={[0.15]} />}
@@ -354,6 +358,7 @@ export default function Scene3D({
         <IKVisualization
           ikDebugData={ikDebugData}
           onDrag={onManualLandmarkDrag}
+          isMobile={isMobile}
         />
       )} */}
 

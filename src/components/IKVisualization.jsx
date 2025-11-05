@@ -192,16 +192,19 @@ function HandLandmarkVisualization({ landmarks, handSide, onDrag }) {
  * @param {Object} ikDebugData - Debug data { left: { rawLandmarks: [...] }, right: { rawLandmarks: [...] } }
  * @param {Function} onDrag - Callback when fingertip is dragged
  */
-export default function IKVisualization({ ikDebugData, onDrag }) {
+export default function IKVisualization({ ikDebugData, onDrag, isMobile = false }) {
   if (!ikDebugData) {
     return null
   }
+
+  // Hand spacing: mobile uses 1 unit apart, desktop uses 0.6 units apart
+  const handSpacing = isMobile ? 0.5 : 0.3
 
   return (
     <group name="ik-visualization">
       {/* Left hand visualization */}
       {ikDebugData.left && ikDebugData.left.rawLandmarks && (
-        <group position={[0.3, 0, 0]}>
+        <group position={[handSpacing, 0, 0]}>
           <HandLandmarkVisualization
             landmarks={ikDebugData.left.rawLandmarks}
             handSide="left"
@@ -212,7 +215,7 @@ export default function IKVisualization({ ikDebugData, onDrag }) {
 
       {/* Right hand visualization */}
       {ikDebugData.right && ikDebugData.right.rawLandmarks && (
-        <group position={[-0.3, 0, 0]}>
+        <group position={[-handSpacing, 0, 0]}>
           <HandLandmarkVisualization
             landmarks={ikDebugData.right.rawLandmarks}
             handSide="right"
