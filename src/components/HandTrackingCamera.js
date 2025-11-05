@@ -402,6 +402,7 @@ export default function HandTrackingCamera({ onHandResults, onJointRotations, on
         style={{
           width: '100%',
           height: '100%',
+          objectFit: 'cover',
           transform: isFlipped ? 'scaleX(1)' : 'scaleX(-1)'
         }}
       />
