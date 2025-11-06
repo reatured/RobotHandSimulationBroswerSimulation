@@ -3,6 +3,7 @@ import HandTrackingCamera from './components/HandTrackingCamera'
 import Scene3D from './components/Scene3D'
 import InspectorPanel from './components/InspectorPanel'
 import DebugPanel from './components/DebugPanel'
+import ModelCarousel from './components/ModelCarousel'
 import { CalibrationManager } from './utils/coordinateMapping'
 import { getShortestRotation } from './utils/handKinematics'
 import { applyMetalMaterial } from './components/URDFHandModel'
@@ -487,6 +488,20 @@ export default function App() {
     setSelectedObject(object)
   }, [])
 
+  // Handler for carousel model selection - applies to both hands
+  const handleModelPairChange = useCallback((modelPath) => {
+    // Find the left and right versions of the selected model
+    const leftModel = HAND_MODELS.find(m => m.path === modelPath && m.side === 'left')
+    const rightModel = HAND_MODELS.find(m => m.path === modelPath && m.side === 'right')
+
+    if (leftModel) {
+      setSelectedLeftModel(leftModel.id)
+    }
+    if (rightModel) {
+      setSelectedRightModel(rightModel.id)
+    }
+  }, [])
+
   // Merge persisted landmarks with manual overrides for IK
   const finalLandmarksForIK = useMemo(() => {
     const merged = {
@@ -766,6 +781,14 @@ export default function App() {
           {showControlPanel ? 'Hide Inspector' : 'Show Inspector'}
         </button>
       )}
+
+      {/* Model Carousel - Bottom carousel for L6, L10, L20 selection */}
+      <ModelCarousel
+        isMobile={isMobile}
+        models={HAND_MODELS}
+        selectedModel={currentLeftModel?.path || currentRightModel?.path}
+        onModelChange={handleModelPairChange}
+      />
     </div>
   )
 }
