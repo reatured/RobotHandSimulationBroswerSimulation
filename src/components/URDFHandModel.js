@@ -156,6 +156,9 @@ export default function URDFHandModel({
           }
         }
 
+        // Store modelPath in robot userData for access by other components
+        loadedRobot.userData.modelPath = modelPath
+
         setRobot(loadedRobot)
         setSemanticMapping(parsedSemanticMapping)
         setLoading(false)

@@ -666,13 +666,21 @@ export function calculateWristOrientation(landmarks, handedness = 'Right') {
  * @param {string} handedness - 'Left' or 'Right'
  * @returns {Object} - Joint rotations and wrist orientation
  */
-export function landmarksToJointRotations(landmarks, handedness = 'Right') {
+export function landmarksToJointRotations(landmarks, handedness = 'Right', modelPath = '') {
   if (!landmarks || landmarks.length !== 21) {
     console.warn('Invalid landmarks: expected 21 points')
     return { wristOrientation: { x: 0, y: 0, z: 0 }, joints: {} }
   }
 
   const joints = {}
+
+  // Check if this is an L20-series model that needs MCP inversion
+  const isL20Model = modelPath.includes('linker_l20') ||
+                     modelPath.includes('linker_l21') ||
+                     modelPath.includes('linker_l25') ||
+                     modelPath.includes('linker_l30') ||
+                     modelPath.includes('linker_o6') ||
+                     modelPath.includes('linker_o7')
 
   // THUMB - Special handling due to different anatomy
   const thumbAngles = calculateThumbJointAngles(landmarks)
@@ -700,7 +708,7 @@ export function landmarksToJointRotations(landmarks, handedness = 'Right') {
   joints.middle_pip = middlePip
   joints.middle_dip = middleDip
   joints.middle_tip = middleDip * 0.7
-  joints.middle_roll = calculateFingerMcpRoll(landmarks, LANDMARKS.MIDDLE_MCP, LANDMARKS.MIDDLE_TIP)
+  joints.middle_roll = isL20Model ? (0.11 - calculateFingerMcpRoll(landmarks, LANDMARKS.MIDDLE_MCP, LANDMARKS.MIDDLE_TIP)) : calculateFingerMcpRoll(landmarks, LANDMARKS.MIDDLE_MCP, LANDMARKS.MIDDLE_TIP)
 
   // RING FINGER
   const { mcp: ringMcp, pip: ringPip, dip: ringDip } = calculateFingerJointAngles(landmarks, LANDMARKS.RING_MCP)
@@ -708,7 +716,7 @@ export function landmarksToJointRotations(landmarks, handedness = 'Right') {
   joints.ring_pip = ringPip
   joints.ring_dip = ringDip
   joints.ring_tip = ringDip * 0.7
-  joints.ring_roll = calculateFingerMcpRoll(landmarks, LANDMARKS.RING_MCP, LANDMARKS.RING_TIP)
+  joints.ring_roll = isL20Model ? (0.11 - calculateFingerMcpRoll(landmarks, LANDMARKS.RING_MCP, LANDMARKS.RING_TIP)) : calculateFingerMcpRoll(landmarks, LANDMARKS.RING_MCP, LANDMARKS.RING_TIP)
 
   // PINKY FINGER
   const { mcp: pinkyMcp, pip: pinkyPip, dip: pinkyDip } = calculateFingerJointAngles(landmarks, LANDMARKS.PINKY_MCP)
@@ -716,7 +724,7 @@ export function landmarksToJointRotations(landmarks, handedness = 'Right') {
   joints.pinky_pip = pinkyPip
   joints.pinky_dip = pinkyDip
   joints.pinky_tip = pinkyDip * 0.7
-  joints.pinky_roll = calculateFingerMcpRoll(landmarks, LANDMARKS.PINKY_MCP, LANDMARKS.PINKY_TIP)
+  joints.pinky_roll = isL20Model ? (0.11 - calculateFingerMcpRoll(landmarks, LANDMARKS.PINKY_MCP, LANDMARKS.PINKY_TIP)) : calculateFingerMcpRoll(landmarks, LANDMARKS.PINKY_MCP, LANDMARKS.PINKY_TIP)
 
   // WRIST - legacy single-axis rotation (kept for compatibility)
   joints.wrist = 0

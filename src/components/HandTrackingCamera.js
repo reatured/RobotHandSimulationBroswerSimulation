@@ -235,10 +235,14 @@ export default function HandTrackingCamera({ onHandResults, onJointRotations, on
             console.log('🔄 Quaternion tracking:', handedness, rotations)
           } else {
             // ORIGINAL PATH: Convert landmarks to joint rotations (1-DOF)
-            rotations = landmarksToJointRotations(landmarks, handedness)
+            const handSide = handedness === 'Left' ? 'left' : 'right'
+            const robot = robotRefs[handSide]?.current
+            const modelPath = robot?.userData?.modelPath || ''
+
+            rotations = landmarksToJointRotations(landmarks, handedness, modelPath)
 
             // Create hand prefix for filter (lowercase for consistency)
-            const handPrefix = handedness === 'Left' ? 'left' : 'right'
+            const handPrefix = handSide
 
             // Apply motion filtering with hand-specific prefix
             rotations = motionFilterRef.current.filter(rotations, Date.now(), handPrefix)
