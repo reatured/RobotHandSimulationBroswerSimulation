@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ModelCarousel = ({ models, selectedModel, onModelChange, isMobile }) => {
+const ModelCarousel = ({ models, selectedModel, onModelChange, isMobile, isVisible = true }) => {
   // Filter to only show L6, L10, L20 models (base models without side)
   const displayModels = models
     .filter(model => ['linker_l6', 'linker_l10', 'linker_l20'].includes(model.path))
@@ -38,9 +38,14 @@ const ModelCarousel = ({ models, selectedModel, onModelChange, isMobile }) => {
     return selectedModel && selectedModel.includes(modelPath);
   };
 
+  // On mobile, always show. On desktop, respect isVisible prop
+  if (!isMobile && !isVisible) {
+    return null;
+  }
+
   return (
-    <div className={`model-carousel-container ${isMobile ? 'relative' : 'fixed bottom-0 left-0 right-0'} z-30`}>
-      <div className="carousel-wrapper  py-8 px-4">
+    <div className={`model-carousel-container ${isMobile ? 'relative' : 'fixed bottom-0 left-0 right-0'} z-30 transition-opacity duration-300 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
+      <div className="carousel-wrapper py-8 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-center">
             <div className="carousel-scroll flex gap-4 md:gap-6 overflow-x-auto overflow-y-visible snap-x snap-mandatory scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent py-6 px-4">
