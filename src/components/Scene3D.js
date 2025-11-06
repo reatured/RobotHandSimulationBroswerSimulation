@@ -274,7 +274,7 @@ export default function Scene3D({
 
           {/* Model name label below left hand */}
           {leftModelShortName && (
-            <Html position={[0, -0.15, 0]} center>
+            <Html position={[0, -0.15, 0]} center zIndexRange={[0, 0]}>
               <div style={{
                 color: 'white',
                 fontSize: '18px',
@@ -329,7 +329,7 @@ export default function Scene3D({
 
           {/* Model name label below right hand */}
           {rightModelShortName && (
-            <Html position={[0, -0.15, 0]} center>
+            <Html position={[0, -0.15, 0]} center zIndexRange={[0, 0]}>
               <div style={{
                 color: 'white',
                 fontSize: '18px',
