@@ -132,8 +132,8 @@ export default function App() {
   const isMobile = useMemo(() => isMobileDevice(), [])
 
   // Separate models for left and right hands
-  const [selectedLeftModel, setSelectedLeftModel] = useState('linker_l10_left')
-  const [selectedRightModel, setSelectedRightModel] = useState('linker_l10_right')
+  const [selectedLeftModel, setSelectedLeftModel] = useState('linker_l20_left')
+  const [selectedRightModel, setSelectedRightModel] = useState('linker_l20_right')
 
   const [handTrackingData, setHandTrackingData] = useState(null)
 
